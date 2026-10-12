@@ -91,6 +91,12 @@ export function QrStudio() {
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  // Other tools (like the UTM builder) can hand over a link: /qr?link=https://...
+  useEffect(() => {
+    const link = new URLSearchParams(window.location.search).get("link");
+    if (link) queueMicrotask(() => setValues((v) => ({ ...v, link: { ...v.link, url: link } })));
+  }, []);
+
   const qrRef = useRef<QRCodeStyling | null>(null);
   const svgRef = useRef<string>("");
 
