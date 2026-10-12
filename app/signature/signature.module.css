@@ -1,0 +1,217 @@
+.note {
+  font-size: 14px;
+  color: var(--muted);
+  margin: -8px 0 14px;
+}
+
+.inlineOpts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.grow {
+  flex: 1 1 220px;
+}
+
+/* image field */
+.imageSet {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.imageThumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.imageUrl {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress {
+  width: 180px;
+  height: 6px;
+  border-radius: 9px;
+  background: var(--soft);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.progress i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s;
+}
+
+.error {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #a23b3b;
+}
+
+.linkRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.linkRow button {
+  padding: 12px 18px;
+}
+
+/* templates */
+.templates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.template {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: transparent;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink);
+  fill: #c9c7c0;
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    transform 0.3s var(--spring);
+}
+
+.template:hover {
+  border-color: var(--line-strong);
+}
+
+.template:active {
+  transform: scale(0.96);
+}
+
+.templateOn {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  fill: var(--ink);
+}
+
+.accentFill {
+  fill: var(--accent);
+}
+
+/* email mockup */
+.mail {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.mailBar {
+  display: flex;
+  gap: 6px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.mailBar i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #dcdad3;
+}
+
+.mailHead {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--soft);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mailHead span {
+  display: inline-block;
+  width: 58px;
+  color: var(--muted);
+}
+
+.mailBody {
+  position: relative;
+  padding: 18px 18px 22px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #333;
+}
+
+.mailBody p {
+  margin-bottom: 10px;
+}
+
+.sig {
+  margin-top: 14px;
+  overflow-x: auto;
+  animation: sigIn 0.5s var(--ease);
+}
+
+.sigSample {
+  opacity: 0.45;
+}
+
+@keyframes sigIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.sampleTag {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  font-size: 12px;
+  background: var(--ink);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 99px;
+}
+
+.howto {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--soft);
+}
+
+.howto ol {
+  margin-top: 12px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  animation: sigIn 0.35s var(--ease);
+}

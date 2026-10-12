@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { QrStudio } from "./QrStudio";
-import styles from "./qr.module.css";
+import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = {
   title: "Free QR code generator, no signup",

@@ -5,6 +5,7 @@ Small tools that each do one job well. No account, no paywall, nothing to upgrad
 | Tool | Route | Status |
 | --- | --- | --- |
 | QR code generator | `/qr` | Live |
+| Email signature generator | `/signature` | Live |
 
 
 More on the way: keyword ideas, page speed audit, UTM builder, link preview, LinkedIn previewer, image resizer, headline analyzer.

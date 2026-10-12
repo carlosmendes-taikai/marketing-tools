@@ -6,7 +6,7 @@ import type { Options } from "qr-code-styling";
 import { CONTENT_TYPES, contrast, encode, luminanceOf, type ContentType, type Field } from "@/lib/qr-data";
 import { composeSvg, saveBlob, svgToPng, type FrameKind, type FrameOptions } from "./compose";
 import { ColorPicker } from "@/components/ColorPicker";
-import styles from "./qr.module.css";
+import styles from "@/components/tool.module.css";
 
 type DotType = NonNullable<NonNullable<Options["dotsOptions"]>["type"]>;
 type CornerType = NonNullable<NonNullable<Options["cornersSquareOptions"]>["type"]>;
