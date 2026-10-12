@@ -118,6 +118,8 @@
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 }
 
@@ -251,10 +253,36 @@
   background: var(--accent-soft) !important;
 }
 
+.sel .rowActions {
+  background: linear-gradient(to right, transparent, var(--accent-soft) 12px);
+}
+
+.bars {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+.bars i {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.bars i.barOn {
+  background: var(--accent);
+}
+
 .rowActions {
+  position: absolute;
+  right: 4px;
   display: flex;
   gap: 2px;
-  padding-right: 6px;
+  padding: 0 2px 0 10px;
+  background: linear-gradient(to right, transparent, var(--soft) 12px);
   opacity: 0;
   transform: translateX(4px);
   transition: 0.2s var(--ease);
@@ -333,6 +361,8 @@
 
 @media (hover: none) {
   .rowActions {
+    position: static;
+    background: none;
     opacity: 1;
     transform: none;
   }

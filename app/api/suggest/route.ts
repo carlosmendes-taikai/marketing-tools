@@ -63,17 +63,21 @@ export async function GET(request: Request) {
   const queries = group.build(seed);
   const results = await pool(queries, 6, (q) => suggest(q, market.gl, market.hl, youtube));
 
-  // skip the seed and the bare prompts we sent ("how email signature")
-  const seen = new Set<string>([seed, ...queries.map(normalize)]);
-  const ideas: string[] = [];
+  // Keep each idea's best position in Google's list (0 = top) and how many prompts surfaced it:
+  // together they drive the popularity score. Skip the seed and the bare prompts we sent.
+  const skip = new Set<string>([seed, ...queries.map(normalize)]);
+  const byIdea = new Map<string, { t: string; p: number; h: number }>();
   for (const list of results)
-    for (const raw of list) {
-      const s = normalize(raw);
-      if (!seen.has(s)) {
-        seen.add(s);
-        ideas.push(s);
-      }
-    }
+    list.forEach((raw, position) => {
+      const t = normalize(raw);
+      if (skip.has(t)) return;
+      const hit = byIdea.get(t);
+      if (hit) {
+        hit.p = Math.min(hit.p, position);
+        hit.h++;
+      } else byIdea.set(t, { t, p: position, h: 1 });
+    });
+  const ideas = [...byIdea.values()];
 
   return Response.json(
     { group: group.id, ideas },

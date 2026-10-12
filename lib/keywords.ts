@@ -45,3 +45,17 @@ export const MARKETS = [
 ];
 
 export const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 80);
+
+/** One idea as the API returns it: text, best position in Google's list (0 = top), times it came up. */
+export type Idea = { t: string; p: number; h: number };
+
+/**
+ * Popularity from 1 to 5. Not search volume: a signal built from how high Google ranks the idea,
+ * how often it comes up, and whether it's one of the top completions for the topic itself.
+ */
+export function popularity(bestPosition: number, hits: number, inPopular: boolean): number {
+  const position = (10 - Math.min(bestPosition, 9)) / 10; // 1 for first place, 0.1 for tenth
+  const reach = Math.min(hits, 4) / 4;
+  const score = 0.6 * position + 0.25 * reach + 0.15 * (inPopular ? 1 : 0);
+  return Math.max(1, Math.min(5, Math.ceil(score * 5)));
+}

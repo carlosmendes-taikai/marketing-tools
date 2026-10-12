@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GROUPS, MARKETS, normalize, type GroupId, type Source } from "@/lib/keywords";
+import { GROUPS, MARKETS, normalize, popularity, type GroupId, type Idea, type Source } from "@/lib/keywords";
 import ui from "@/components/tool.module.css";
 import styles from "./keywords.module.css";
 
-type GroupState = { status: "loading" | "done" | "error"; ideas: string[]; error?: string };
+type GroupState = { status: "loading" | "done" | "error"; ideas: Idea[]; error?: string };
+type Sort = "google" | "popular";
 const HISTORY_KEY = "keywords-history-v1";
 const PREVIEW = 30;
 const EXAMPLES = ["email signature", "coffee shop", "running shoes", "crm software"];
@@ -21,6 +22,7 @@ export function KeywordStudio() {
   const [expanded, setExpanded] = useState<Set<GroupId>>(new Set());
   const [history, setHistory] = useState<string[]>([]);
   const [copied, setCopied] = useState("");
+  const [sort, setSort] = useState<Sort>("google");
   const run = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,30 +55,46 @@ export function KeywordStudio() {
     } catch {}
 
     for (const g of GROUPS) {
-      const params = new URLSearchParams({ q, group: g.id, market: m, source: src });
+      const params = new URLSearchParams({ q, group: g.id, market: m, source: src, v: "2" });
       fetch(`/api/suggest?${params}`)
         .then(async (res) => {
           const data = await res.json();
           if (!res.ok) throw new Error(data.error ?? "Something went wrong");
-          return data.ideas as string[];
+          return data.ideas as Idea[];
         })
         .then((ideas) => id === run.current && setGroups((s) => ({ ...s, [g.id]: { status: "done", ideas } })))
         .catch((e: Error) => id === run.current && setGroups((s) => ({ ...s, [g.id]: { status: "error", ideas: [], error: e.message } })));
     }
   }
 
+  // Popularity for every idea across all groups: best rank anywhere, how often it came up,
+  // and whether Google offers it straight after the topic itself.
+  const scores = useMemo(() => {
+    const agg = new Map<string, { p: number; h: number; popular: boolean }>();
+    for (const g of GROUPS)
+      for (const { t, p, h } of groups[g.id]?.ideas ?? []) {
+        const a = agg.get(t);
+        if (a) {
+          a.p = Math.min(a.p, p);
+          a.h += h;
+          a.popular ||= g.id === "popular";
+        } else agg.set(t, { p, h, popular: g.id === "popular" });
+      }
+    return new Map([...agg].map(([t, a]) => [t, popularity(a.p, a.h, a.popular)]));
+  }, [groups]);
+
   // Every idea once, in group order: what the totals and exports use.
   const all = useMemo(() => {
     const seen = new Set<string>();
-    const rows: { idea: string; group: string }[] = [];
+    const rows: { idea: string; group: string; score: number }[] = [];
     for (const g of GROUPS)
-      for (const idea of groups[g.id]?.ideas ?? [])
-        if (!seen.has(idea)) {
-          seen.add(idea);
-          rows.push({ idea, group: g.label });
+      for (const { t } of groups[g.id]?.ideas ?? [])
+        if (!seen.has(t)) {
+          seen.add(t);
+          rows.push({ idea: t, group: g.label, score: scores.get(t) ?? 1 });
         }
-    return rows;
-  }, [groups]);
+    return sort === "popular" ? [...rows].sort((a, b) => b.score - a.score) : rows;
+  }, [groups, scores, sort]);
 
   const f = filter.trim().toLowerCase();
   const loading = GROUPS.some((g) => groups[g.id]?.status === "loading");
@@ -99,7 +117,7 @@ export function KeywordStudio() {
   }
 
   function downloadCsv() {
-    const rows = [["keyword", "group"], ...exportRows().map((r) => [r.idea, r.group])];
+    const rows = [["keyword", "group", "popularity (1-5)"], ...exportRows().map((r) => [r.idea, r.group, String(r.score)])];
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
@@ -197,6 +215,18 @@ export function KeywordStudio() {
               )}
             </div>
             <div className={styles.actions}>
+              <div className={ui.segment}>
+                {(
+                  [
+                    ["google", "Google order"],
+                    ["popular", "Most popular"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button key={id} className={sort === id ? ui.on : ""} onClick={() => setSort(id)}>
+                    {label}
+                  </button>
+                ))}
+              </div>
               <input className={styles.filter} value={filter} placeholder="Filter" onChange={(e) => setFilter(e.target.value)} />
               <button className={ui.secondary} disabled={!all.length} onClick={copyList}>
                 {copied === "list" ? "Copied" : selected.size ? "Copy selected" : "Copy all"}
@@ -210,7 +240,8 @@ export function KeywordStudio() {
           <div className={styles.groups} key={seed + market + source}>
             {GROUPS.map((g, gi) => {
               const state = groups[g.id];
-              const ideas = (state?.ideas ?? []).filter((i) => !f || i.includes(f));
+              const texts = (state?.ideas ?? []).map((i) => i.t).filter((t) => !f || t.includes(f));
+              const ideas = sort === "popular" ? [...texts].sort((a, b) => (scores.get(b) ?? 1) - (scores.get(a) ?? 1)) : texts;
               const open = expanded.has(g.id);
               const visible = open ? ideas : ideas.slice(0, PREVIEW);
               return (
@@ -222,7 +253,7 @@ export function KeywordStudio() {
                   {state?.status === "loading" && <Skeleton />}
                   {state?.status === "error" && <p className={styles.empty}>{state.error}</p>}
                   {state?.status === "done" && !ideas.length && <p className={styles.empty}>{f ? "Nothing matches the filter." : "No ideas here."}</p>}
-                  <ul>
+                  <ul key={sort}>
                     {visible.map((idea, i) => (
                       <li key={idea} style={{ animationDelay: `${Math.min(i, 20) * 18}ms` }} className={selected.has(idea) ? styles.sel : ""}>
                         <button className={styles.idea} onClick={() => toggle(idea)}>
@@ -231,6 +262,7 @@ export function KeywordStudio() {
                             <Highlight text={idea} seed={seed} />
                           </span>
                         </button>
+                        <Bars value={scores.get(idea) ?? 1} />
                         <span className={styles.rowActions}>
                           <button title="Copy" onClick={() => copyOne(idea)}>
                             {copied === idea ? "✓" : <CopyIcon />}
@@ -303,3 +335,14 @@ const DigIcon = () => (
     <path d="m20 20-4.5-4.5" />
   </svg>
 );
+
+/** Five rising bars; the filled ones show popularity. A signal, not search volume. */
+function Bars({ value }: { value: number }) {
+  return (
+    <span className={styles.bars} title={`Popularity ${value} of 5, based on how Google ranks it`} aria-label={`Popularity ${value} of 5`}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <i key={n} className={n <= value ? styles.barOn : ""} style={{ height: 4 + n * 2.2 }} />
+      ))}
+    </span>
+  );
+}
