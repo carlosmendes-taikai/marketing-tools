@@ -1,0 +1,359 @@
+.studio {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* search */
+.searchPanel {
+  padding: 18px;
+}
+
+.searchRow {
+  display: flex;
+  gap: 10px;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 99px;
+  padding: 16px 22px;
+  font-size: 18px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.searchRow button {
+  flex: none;
+  padding: 0 26px;
+}
+
+.optionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.select select {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2376746e' stroke-width='1.5'/%3E%3C/svg%3E")
+    no-repeat right 14px center;
+  border-radius: 99px;
+  padding: 7px 34px 7px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.examples button {
+  border: 0;
+  background: var(--soft);
+  border-radius: 99px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.examples button:hover {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+/* toolbar */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 4px 0;
+  animation: rise-in 0.5s var(--ease);
+}
+
+.count {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.count b {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.count em {
+  font-style: normal;
+  color: var(--ink);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  padding: 10px 16px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.filter {
+  border: 1px solid var(--line);
+  background: var(--tile);
+  border-radius: 99px;
+  padding: 10px 16px;
+  font-size: 14px;
+  width: 180px;
+  outline: none;
+}
+
+.filter:focus {
+  border-color: var(--accent);
+}
+
+/* groups */
+.groups {
+  columns: 3 320px;
+  column-gap: 12px;
+}
+
+.group {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  background: var(--tile);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 10px 12px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: rise-in 0.6s var(--spring) forwards;
+}
+
+.group header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 10px 8px;
+}
+
+.group h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.group header span {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.group ul {
+  list-style: none;
+}
+
+.group li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  opacity: 0;
+  animation: rise-in 0.35s var(--ease) forwards;
+  transition: background 0.15s;
+}
+
+.group li:hover {
+  background: var(--soft);
+}
+
+.idea {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 7px 10px;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+
+.ideaText {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.idea b {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.seed {
+  color: var(--muted);
+}
+
+.tick {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1.5px solid var(--line-strong);
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.3s var(--spring);
+}
+
+.sel .tick {
+  background: var(--accent)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8'%3E%3Cpath d='M1 4l3 3 5-6' fill='none' stroke='white' stroke-width='1.8'/%3E%3C/svg%3E")
+    no-repeat center;
+  border-color: var(--accent);
+  transform: scale(1.08);
+}
+
+.sel {
+  background: var(--accent-soft);
+}
+
+.sel:hover {
+  background: var(--accent-soft) !important;
+}
+
+.rowActions {
+  display: flex;
+  gap: 2px;
+  padding-right: 6px;
+  opacity: 0;
+  transform: translateX(4px);
+  transition: 0.2s var(--ease);
+}
+
+.group li:hover .rowActions {
+  opacity: 1;
+  transform: none;
+}
+
+.rowActions button {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.rowActions button:hover {
+  background: var(--tile);
+  color: var(--ink);
+}
+
+.more {
+  margin: 6px 10px 2px;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent-ink);
+  cursor: pointer;
+}
+
+.empty {
+  padding: 6px 10px 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 10px 12px;
+}
+
+.skeleton i {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--soft) 0%, #e7e5df 50%, var(--soft) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (hover: none) {
+  .rowActions {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .searchRow {
+    flex-direction: column;
+  }
+  .searchRow button {
+    padding: 14px;
+  }
+  .examples {
+    margin-left: 0;
+  }
+  .filter {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+  .actions {
+    width: 100%;
+  }
+}
