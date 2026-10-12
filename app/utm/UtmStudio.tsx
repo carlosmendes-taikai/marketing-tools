@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { MiniQr, downloadQrPng } from "@/components/MiniQr";
-import { buildUtm, CHANNELS, EMPTY_UTM, FIELD_INFO, parseBase, tidyValue, warningsFor, type Clean, type SavedLink, type UtmFields } from "@/lib/utm";
+import { buildUtm, CHANNELS, type Channel, EMPTY_UTM, FIELD_INFO, parseBase, tidyValue, warningsFor, type Clean, type SavedLink, type UtmFields } from "@/lib/utm";
 import ui from "@/components/tool.module.css";
 import styles from "./utm.module.css";
 
@@ -16,6 +16,11 @@ export function UtmStudio() {
   const [mode, setMode] = useState<"single" | "multi">("single");
   const [channels, setChannels] = useState<Set<string>>(new Set(["linkedin", "instagram", "newsletter"]));
   const [more, setMore] = useState(false);
+  const [other, setOther] = useState(false);
+  const [customOpen, setCustomOpen] = useState(false);
+  const [custom, setCustom] = useState<Channel[]>([]);
+  const [draft, setDraft] = useState({ source: "", medium: "" });
+  const sourceRef = useRef<HTMLInputElement>(null);
   const [library, setLibrary] = useState<SavedLink[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [copied, setCopied] = useState("");
@@ -44,15 +49,26 @@ export function UtmStudio() {
 
   const multi = useMemo(
     () =>
-      CHANNELS.filter((c) => channels.has(c.id)).map((c) => ({
+      [...CHANNELS, ...custom].filter((c) => channels.has(c.id)).map((c) => ({
         channel: c,
         url: buildUtm(base, { ...fields, source: c.source, medium: c.medium }, clean),
       })),
-    [base, fields, clean, channels],
+    [base, fields, clean, channels, custom],
   );
 
   const set = (key: keyof UtmFields, v: string) => setFields((f) => ({ ...f, [key]: v }));
-  const activeChannel = CHANNELS.find((c) => c.source === fields.source && c.medium === fields.medium)?.id;
+  const activeChannel = other ? undefined : CHANNELS.find((c) => c.source === fields.source && c.medium === fields.medium)?.id;
+  const otherOn = mode === "single" ? other || (!activeChannel && !!(fields.source || fields.medium)) : customOpen;
+
+  function addCustom() {
+    const source = tidyValue(draft.source, clean);
+    const medium = tidyValue(draft.medium, clean);
+    if (!source || !medium) return;
+    const id = `custom-${source}-${medium}`;
+    if (!custom.some((c) => c.id === id)) setCustom((list) => [...list, { id, label: source, source, medium }]);
+    setChannels((sel) => new Set(sel).add(id));
+    setDraft({ source: "", medium: "" });
+  }
 
   function flash(key: string) {
     setCopied(key);
@@ -99,15 +115,17 @@ export function UtmStudio() {
           <section className={ui.panel} style={{ animationDelay: "0.26s" }}>
             <h2>{mode === "single" ? "Where will you share it?" : "Pick the channels"}</h2>
             <div className={styles.channels}>
-              {CHANNELS.map((c) => {
+              {(mode === "single" ? CHANNELS : [...CHANNELS, ...custom]).map((c) => {
                 const on = mode === "single" ? activeChannel === c.id : channels.has(c.id);
                 return (
                   <button
                     key={c.id}
                     className={`${styles.chip} ${on ? styles.chipOn : ""}`}
                     onClick={() => {
-                      if (mode === "single") setFields((f) => ({ ...f, source: c.source, medium: c.medium }));
-                      else
+                      if (mode === "single") {
+                        setOther(false);
+                        setFields((f) => ({ ...f, source: c.source, medium: c.medium }));
+                      } else
                         setChannels((s) => {
                           const n = new Set(s);
                           if (n.has(c.id)) n.delete(c.id);
@@ -121,20 +139,53 @@ export function UtmStudio() {
                   </button>
                 );
               })}
+              <button
+                className={`${styles.chip} ${otherOn ? styles.chipOn : ""}`}
+                onClick={() => {
+                  if (mode === "single") {
+                    setOther(true);
+                    setFields((f) => ({ ...f, source: "", medium: "" }));
+                    setTimeout(() => sourceRef.current?.focus(), 0);
+                  } else setCustomOpen((o) => !o);
+                }}
+              >
+                Other
+              </button>
             </div>
+
+            {mode === "multi" && customOpen && (
+              <div className={styles.customRow}>
+                <label className={ui.field}>
+                  <span className={styles.label}>Campaign source</span>
+                  <input value={draft.source} placeholder="podcast" spellCheck={false} onChange={(e) => setDraft((d) => ({ ...d, source: e.target.value }))} onKeyDown={(e) => e.key === "Enter" && addCustom()} />
+                </label>
+                <label className={ui.field}>
+                  <span className={styles.label}>Campaign medium</span>
+                  <input value={draft.medium} placeholder="audio" spellCheck={false} onChange={(e) => setDraft((d) => ({ ...d, medium: e.target.value }))} onKeyDown={(e) => e.key === "Enter" && addCustom()} />
+                </label>
+                <button className={ui.secondary} disabled={!draft.source.trim() || !draft.medium.trim()} onClick={addCustom}>
+                  Add channel
+                </button>
+              </div>
+            )}
 
             <div className={`${ui.fields} ${styles.tagFields}`}>
               {FIELD_INFO.filter((f) => (mode === "single" ? !f.optional || more : f.key !== "source" && f.key !== "medium" && (!f.optional || more))).map((f) => (
                 <label key={f.key} className={`${ui.field} ${ui.half}`}>
-                  <span>
-                    {f.label} <em className={styles.hint}>{f.hint}</em>
-                  </span>
-                  <input value={fields[f.key]} placeholder={f.placeholder} spellCheck={false} onChange={(e) => set(f.key, e.target.value)} />
+                  <span className={styles.label}>{f.label}</span>
+                  <small className={styles.desc}>{f.hint}</small>
+                  <input
+                    ref={f.key === "source" ? sourceRef : undefined}
+                    value={fields[f.key]}
+                    placeholder={f.placeholder}
+                    spellCheck={false}
+                    onChange={(e) => set(f.key, e.target.value)}
+                  />
                 </label>
               ))}
             </div>
             <button className={ui.textBtn} onClick={() => setMore((m) => !m)} style={{ marginTop: 12 }}>
-              {more ? "Fewer options" : "More options: content, term, campaign ID"}
+              {more ? "Fewer options" : "More options: campaign content, term and ID"}
             </button>
 
             <div className={ui.row} style={{ marginTop: 14 }}>
@@ -306,9 +357,12 @@ function Library({
   onDelete: (id: string) => void;
 }) {
   const [q, setQ] = useState("");
+  // While deleting rows in a row, hold the list's height so nothing slides under the cursor.
+  const listRef = useRef<HTMLUListElement>(null);
+  const [lockedHeight, setLockedHeight] = useState<number | null>(null);
   const shown = items.filter((l) => !q || l.url.toLowerCase().includes(q.toLowerCase()));
   return (
-    <section className={`${ui.panel} ${styles.library}`} style={{ animationDelay: "0.4s" }}>
+    <section className={`${ui.panel} ${styles.library}`} style={{ animationDelay: "0.4s" }} onMouseLeave={() => setLockedHeight(null)}>
       <div className={styles.libHead}>
         <h2>Saved links</h2>
         {items.length > 0 && (
@@ -323,7 +377,7 @@ function Library({
       {items.length === 0 ? (
         <p className={styles.libEmpty}>Links you save stay here, in this browser only. Nothing is sent anywhere.</p>
       ) : (
-        <ul className={styles.libList}>
+        <ul className={styles.libList} ref={listRef} style={lockedHeight ? { minHeight: lockedHeight } : undefined}>
           {shown.map((l) => (
             <li key={l.id}>
               <div className={styles.libMain}>
@@ -342,7 +396,14 @@ function Library({
               <button className={styles.iconBtn} onClick={() => onLoad(l)}>
                 Edit
               </button>
-              <button className={`${styles.iconBtn} ${styles.danger}`} onClick={() => onDelete(l.id)} aria-label="Delete">
+              <button
+                className={`${styles.iconBtn} ${styles.danger}`}
+                onClick={() => {
+                  if (lockedHeight === null && listRef.current) setLockedHeight(listRef.current.offsetHeight);
+                  onDelete(l.id);
+                }}
+                aria-label="Delete"
+              >
                 ×
               </button>
             </li>

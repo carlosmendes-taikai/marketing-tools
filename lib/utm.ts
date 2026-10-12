@@ -5,7 +5,9 @@ export type UtmFields = { source: string; medium: string; campaign: string; term
 export const EMPTY_UTM: UtmFields = { source: "", medium: "", campaign: "", term: "", content: "", id: "" };
 
 // The usual source and medium for each channel, following Google Analytics' channel rules.
-export const CHANNELS: { id: string; label: string; source: string; medium: string }[] = [
+export type Channel = { id: string; label: string; source: string; medium: string };
+
+export const CHANNELS: Channel[] = [
   { id: "linkedin", label: "LinkedIn", source: "linkedin", medium: "social" },
   { id: "instagram", label: "Instagram", source: "instagram", medium: "social" },
   { id: "facebook", label: "Facebook", source: "facebook", medium: "social" },
@@ -20,13 +22,14 @@ export const CHANNELS: { id: string; label: string; source: string; medium: stri
   { id: "partner", label: "Partner site", source: "partner", medium: "referral" },
 ];
 
+// Google's own names for each tag, with a plain description underneath.
 export const FIELD_INFO: { key: keyof UtmFields; label: string; hint: string; placeholder: string; optional?: boolean }[] = [
-  { key: "source", label: "Source", hint: "Where the click comes from", placeholder: "linkedin" },
-  { key: "medium", label: "Medium", hint: "The type of channel", placeholder: "social" },
-  { key: "campaign", label: "Campaign", hint: "Name of the campaign or launch", placeholder: "spring_launch" },
-  { key: "content", label: "Content", hint: "Tells two links in the same post apart", placeholder: "hero_button", optional: true },
-  { key: "term", label: "Term", hint: "The paid keyword, for search ads", placeholder: "qr code generator", optional: true },
-  { key: "id", label: "Campaign ID", hint: "Your ads platform's campaign number", placeholder: "abc123", optional: true },
+  { key: "source", label: "Campaign source", hint: "Where the visit comes from: the site, app or newsletter", placeholder: "linkedin" },
+  { key: "medium", label: "Campaign medium", hint: "The type of channel, like social, email or cpc", placeholder: "social" },
+  { key: "campaign", label: "Campaign name", hint: "Name of the campaign or launch", placeholder: "spring_launch" },
+  { key: "content", label: "Campaign content", hint: "Tells apart links in the same place, like a header button and a footer link", placeholder: "header_button", optional: true },
+  { key: "term", label: "Campaign term", hint: "The keyword you paid for, in search ads", placeholder: "qr code generator", optional: true },
+  { key: "id", label: "Campaign ID", hint: "The campaign's ID from your ads platform, to match reports", placeholder: "summer_24_01", optional: true },
 ];
 
 export type Clean = { lowercase: boolean; spaces: "_" | "-" | "keep" };
@@ -67,8 +70,8 @@ export function warningsFor(base: string, f: UtmFields): string[] {
   const u = parseBase(base);
   if (base.trim() && !u) w.push("That link doesn't look right. Include the full address, like yoursite.com/page.");
   if (u && [...u.searchParams.keys()].some((k) => k.startsWith("utm_"))) w.push("Your link already had tags. We replaced them with the ones below.");
-  if (u && (f.source || f.campaign) && !f.medium.trim()) w.push("Add a medium. Without it, analytics tools file the visit under \"unassigned\".");
-  if (u && (f.medium || f.campaign) && !f.source.trim()) w.push("Add a source so you can see where the clicks came from.");
+  if (u && (f.source || f.campaign) && !f.medium.trim()) w.push("Add a campaign medium. Without it, analytics tools file the visit under \"unassigned\".");
+  if (u && (f.medium || f.campaign) && !f.source.trim()) w.push("Add a campaign source so you can see where the clicks came from.");
   if (u && !f.campaign.trim() && (f.source || f.medium)) w.push("Add a campaign name so this link is easy to find in reports.");
   return w;
 }
