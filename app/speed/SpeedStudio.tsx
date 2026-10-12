@@ -110,7 +110,7 @@ function Progress() {
     <div className={styles.progress}>
       <div className={styles.progressHead}>
         <b>Running the audit</b>
-        <span>{Math.floor(t)} s · usually 20 to 40 s</span>
+        <span>{t > 60 ? `${Math.floor(t)} s · big sites can take up to 2 minutes` : `${Math.floor(t)} s · usually 20 to 60 s`}</span>
       </div>
       <div className={styles.track}>
         <i style={{ width: `${pct}%` }} />

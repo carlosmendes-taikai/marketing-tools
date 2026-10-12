@@ -7,9 +7,10 @@ Small tools that each do one job well. No account, no paywall, nothing to upgrad
 | QR code generator | `/qr` | Live |
 | Email signature generator | `/signature` | Live |
 | Keyword ideas | `/keywords` | Live |
+| Page speed audit | `/speed` | Live |
 
 
-More on the way: page speed audit, UTM builder, link preview, LinkedIn previewer, image resizer, headline analyzer.
+More on the way: UTM builder, link preview, LinkedIn previewer, image resizer, headline analyzer.
 
 ## Run it locally
 

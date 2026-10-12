@@ -178,7 +178,8 @@ export function toReport(data: Psi, strategy: Strategy): Report {
         title: plain?.title ?? tidy(a.title),
         why: plain?.why ?? "",
         savingsMs: Math.round(savingsMs),
-        savingsBytes: Math.round(a.details?.overallSavingsBytes ?? 0),
+        // newer insights don't report a byte total, so add up the files they list
+        savingsBytes: Math.round(a.details?.overallSavingsBytes ?? (a.details?.items ?? []).reduce((sum, r) => sum + Number(r.wastedBytes ?? 0), 0)),
         items: itemsOf(a),
       };
     })

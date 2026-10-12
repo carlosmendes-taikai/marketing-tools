@@ -4,7 +4,7 @@ import { cleanUrl, toReport, type Strategy } from "@/lib/speed";
 // Runs Google PageSpeed Insights and returns a trimmed, plain-English report.
 // Reports for the same page are cached for an hour.
 
-export const maxDuration = 60;
+export const maxDuration = 280;
 
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 6;
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
   if (process.env.PSI_API_KEY) api.searchParams.set("key", process.env.PSI_API_KEY);
 
   try {
-    const res = await fetch(api, { signal: AbortSignal.timeout(55_000) });
+    const res = await fetch(api, { signal: AbortSignal.timeout(270_000) });
     const data = await res.json();
     if (!res.ok) {
       const msg: string = data?.error?.message ?? "";
