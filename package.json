@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "next": "16.4.0",
+    "qr-code-styling": "^1.9.2",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },

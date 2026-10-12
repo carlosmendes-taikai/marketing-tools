@@ -1,0 +1,91 @@
+.hero {
+  padding: 64px 0 44px;
+}
+
+.title {
+  font-size: 88px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+}
+
+.line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.06em;
+}
+
+.line > span {
+  display: inline-block;
+  transform: translateY(105%);
+  animation: rise 0.9s var(--ease) forwards;
+}
+
+.mark {
+  position: relative;
+  isolation: isolate;
+}
+
+.mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.08em;
+  height: 0.14em;
+  background: var(--accent);
+  border-radius: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: draw 0.7s 1s var(--ease) forwards;
+  z-index: -1;
+}
+
+@keyframes draw {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.sub {
+  margin-top: 14px;
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  color: var(--muted);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: pop 0.8s 0.5s var(--ease) forwards;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding-top: 40px;
+  }
+  .sub {
+    font-size: 22px;
+  }
+  .title {
+    font-size: 54px;
+  }
+}
+
+@keyframes rise {
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

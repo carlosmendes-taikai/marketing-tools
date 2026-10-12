@@ -1,0 +1,84 @@
+.navOuter {
+  padding: 22px 0;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.mark {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  transition: transform 0.5s var(--spring);
+}
+
+.mark i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.mark i:nth-child(2) {
+  background: var(--accent);
+}
+
+.logo:hover .mark {
+  transform: rotate(90deg);
+}
+
+.links {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.links a {
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  transition: background 0.2s;
+}
+
+.links a:hover {
+  background: var(--soft);
+}
+
+.links a.dark {
+  background: var(--ink);
+  color: #fff;
+}
+
+.footerOuter {
+  margin-top: 90px;
+  padding-bottom: 44px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.footerOuter .footer {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+
+.footer a:hover {
+  color: var(--ink);
+}
