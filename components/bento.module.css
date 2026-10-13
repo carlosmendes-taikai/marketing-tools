@@ -650,3 +650,72 @@
     width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* vibe code audit: a checklist that fills in */
+.vibe {
+  width: 100%;
+  max-width: 340px;
+  display: grid;
+  gap: 12px;
+}
+
+.vibeHead {
+  display: flex;
+  gap: 6px;
+}
+
+.vibeChip {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--soft);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.vibe ul {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.vibe li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--soft);
+  opacity: 0.35;
+  transform: translateX(-6px);
+  transition:
+    opacity 0.35s var(--ease),
+    transform 0.45s var(--spring);
+}
+
+.vibe li.vibeOn {
+  opacity: 1;
+  transform: none;
+}
+
+.vibe li i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  transition: background 0.3s;
+}
+
+.vibeOn.v_pass i {
+  background: #3f9d6b;
+}
+
+.vibeOn.v_warn i {
+  background: var(--warn);
+}
+
+.vibeOn.v_fail i {
+  background: #d1493f;
+}

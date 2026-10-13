@@ -10,6 +10,7 @@ type DemoProps = { active: boolean };
 
 const SIZE: Record<string, string> = {
   qr: `${styles.big} ${styles.dark}`,
+  vibe: styles.big,
   signature: styles.wide,
   utm: styles.wide,
   resize: styles.wide,
@@ -21,6 +22,7 @@ const DEMOS: Record<string, ComponentType<DemoProps>> = {
   signature: SignatureDemo,
   keywords: KeywordsDemo,
   speed: SpeedDemo,
+  vibe: VibeDemo,
   utm: UtmDemo,
   preview: PreviewDemo,
   linkedin: LinkedinDemo,
@@ -462,6 +464,34 @@ function Gauge({ target, active }: { target: number; active: boolean }) {
         <circle className={styles.gFg} cx="65" cy="65" r="52" style={{ strokeDashoffset: 327 * (1 - n / 100) }} />
       </svg>
       <div className={styles.gNum}>{n}</div>
+    </div>
+  );
+}
+
+const VIBE: [string, "pass" | "warn" | "fail"][] = [
+  ["No secret keys in public code", "pass"],
+  ["Google can read the page", "fail"],
+  ["Page title and share image", "pass"],
+  ["Browser security settings", "warn"],
+  ["JavaScript size: 1.4 MB", "fail"],
+];
+
+function VibeDemo({ active }: DemoProps) {
+  const n = useCountUp(VIBE.length, 1, 620, active, 4);
+  return (
+    <div className={styles.vibe}>
+      <div className={styles.vibeHead}>
+        <span className={styles.vibeChip}>Lovable</span>
+        <span className={styles.vibeChip}>Supabase</span>
+      </div>
+      <ul>
+        {VIBE.map(([label, status], k) => (
+          <li key={label} className={`${styles[`v_${status}`]} ${k < n ? styles.vibeOn : ""}`}>
+            <i />
+            {label}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

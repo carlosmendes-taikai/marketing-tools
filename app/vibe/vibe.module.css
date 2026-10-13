@@ -1,0 +1,165 @@
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.tag {
+  flex: none;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.fail {
+  color: #d0442b;
+  background: #fbe5e0;
+}
+
+.warn {
+  color: #b7791f;
+  background: #fbf1df;
+}
+
+.fix {
+  color: var(--ink) !important;
+}
+
+.fix b {
+  font-weight: 600;
+}
+
+.note {
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.note:first-of-type {
+  border-top: 0;
+  padding-top: 4px;
+}
+
+.note b {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.note p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 720px;
+}
+
+.note p + p {
+  margin-top: 8px;
+}
+
+.tips {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tips li {
+  position: relative;
+  padding: 12px 14px 12px 36px;
+  border-radius: 12px;
+  background: var(--soft);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.tips li::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 19px;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.load {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.load p {
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.load p b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.spinner {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid var(--line);
+  border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadScore {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.loadScore.good {
+  color: #1f8f55;
+  background: #e1f3e8;
+}
+
+.loadScore.ok {
+  color: #b7791f;
+  background: #fbf1df;
+}
+
+.loadScore.poor {
+  color: #d0442b;
+  background: #fbe5e0;
+}
+
+.scope {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 720px;
+  padding: 4px 4px 0;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .load {
+    flex-wrap: wrap;
+  }
+}
