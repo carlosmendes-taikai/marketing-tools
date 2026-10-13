@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/og";
 import { SignatureStudio } from "./SignatureStudio";
 import styles from "@/components/tool.module.css";
 
-export const metadata: Metadata = {
-  title: "Free email signature generator with GIF",
-  description:
-    "Make a professional email signature with your photo, social icons and an animated GIF banner. Works in Gmail, Outlook and Apple Mail. Free, no account.",
-};
+export const metadata: Metadata = pageMetadata(
+  "Free email signature generator with GIF",
+  "Make a professional email signature with your photo, social icons and an animated GIF banner. Works in Gmail, Outlook and Apple Mail. Free, no account.",
+  "/signature",
+);
 
 export default function SignaturePage() {
   return (

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/og";
 import { QrStudio } from "./QrStudio";
 import styles from "@/components/tool.module.css";
 
-export const metadata: Metadata = {
-  title: "Free QR code generator, no signup",
-  description: "Make styled QR codes for links, wifi, contacts, events and more. Add your logo and a frame. Download PNG or SVG. Free, no account, never expires.",
-};
+export const metadata: Metadata = pageMetadata(
+  "Free QR code generator, no signup",
+  "Make styled QR codes for links, wifi, contacts, events and more. Add your logo and a frame. Download PNG or SVG. Free, no account, never expires.",
+  "/qr",
+);
 
 export default function QrPage() {
   return (

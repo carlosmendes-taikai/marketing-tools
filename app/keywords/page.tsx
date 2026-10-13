@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/og";
 import { KeywordStudio } from "./KeywordStudio";
 import styles from "@/components/tool.module.css";
 
-export const metadata: Metadata = {
-  title: "Free keyword ideas tool, questions people ask",
-  description:
-    "Find the questions and phrases people type into Google and YouTube about any topic. Hundreds of keyword ideas, grouped and exportable to CSV. Free, no account.",
-};
+export const metadata: Metadata = pageMetadata(
+  "Free keyword ideas tool, questions people ask",
+  "Find the questions and phrases people type into Google and YouTube about any topic. Hundreds of keyword ideas, grouped and exportable to CSV. Free, no account.",
+  "/keywords",
+);
 
 export default function KeywordsPage() {
   return (

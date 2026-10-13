@@ -1,0 +1,25 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/og";
+import { PreviewStudio } from "./PreviewStudio";
+import styles from "@/components/tool.module.css";
+
+export const metadata: Metadata = pageMetadata(
+  "Free link preview checker for LinkedIn, X and WhatsApp",
+  "See how your link looks on LinkedIn, X, WhatsApp, Slack, Facebook and Google before you share it. Checks your share image and tags, and gives you fixed tags to paste. Free, no account.",
+  "/preview",
+);
+
+export default function PreviewPage() {
+  return (
+    <main className="wrap">
+      <header className={styles.head}>
+        <h1>
+          <span className={styles.line}>
+            <span>Link preview</span>
+          </span>
+        </h1>
+      </header>
+      <PreviewStudio />
+    </main>
+  );
+}
