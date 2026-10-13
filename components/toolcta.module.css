@@ -1,0 +1,92 @@
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  margin: 32px 0;
+  padding: 12px;
+  background: var(--tile);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-decoration: none !important;
+  color: var(--ink) !important;
+  transition:
+    transform 0.4s var(--spring),
+    box-shadow 0.4s var(--ease),
+    border-color 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: 0 24px 40px -28px rgba(20, 20, 19, 0.35);
+}
+
+.demo {
+  height: 210px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px 10px;
+}
+
+.text small {
+  font-size: 12px;
+  color: var(--accent-ink);
+  font-weight: 500;
+}
+
+.text b {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.text > span {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.button {
+  margin-top: 8px;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  padding: 10px 16px;
+  border-radius: 99px;
+  transition: background 0.2s;
+}
+
+.card:hover .button {
+  background: var(--accent-ink);
+}
+
+.button span {
+  display: inline-block;
+  transition: transform 0.3s var(--spring);
+}
+
+.card:hover .button span {
+  transform: translateX(3px);
+}
+
+.end {
+  margin-top: 48px;
+}
+
+@media (max-width: 640px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+  .demo {
+    height: 180px;
+  }
+}

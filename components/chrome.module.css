@@ -45,14 +45,16 @@
   align-items: center;
 }
 
-.links > a {
+.links > a,
+.navLink {
   font-size: 14px;
   padding: 8px 14px;
   border-radius: 99px;
   transition: background 0.2s;
 }
 
-.links > a:hover {
+.links > a:hover,
+.navLink:hover {
   background: var(--soft);
 }
 

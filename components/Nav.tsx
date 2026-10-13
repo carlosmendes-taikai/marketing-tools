@@ -18,8 +18,11 @@ export function Nav() {
           {SITE_NAME}
         </Link>
         <div className={styles.links}>
-          <SaveButton />
           <ToolsMenu />
+          <Link href="/blog" className={styles.navLink}>
+            Blog
+          </Link>
+          <SaveButton />
         </div>
       </div>
     </nav>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/og";
 import { HeadlineStudio } from "./HeadlineStudio";
+import { RelatedGuides } from "@/components/RelatedGuides";
 import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
@@ -20,6 +21,7 @@ export default function HeadlinePage() {
         </h1>
       </header>
       <HeadlineStudio />
+      <RelatedGuides tool="headline" />
     </main>
   );
 }

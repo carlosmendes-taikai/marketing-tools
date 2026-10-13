@@ -29,12 +29,12 @@ const DEMOS: Record<string, ComponentType<DemoProps>> = {
 };
 
 /** One tool's demo, playing, for use outside the landing grid (the nav's Tools menu). */
-export function ToolDemo({ slug }: { slug: string }) {
+export function ToolDemo({ slug, active = true }: { slug: string; active?: boolean }) {
   const Demo = DEMOS[slug];
   if (!Demo) return null;
   return (
-    <div className={`${styles.menuStage} ${slug === "qr" ? styles.dark : ""}`}>
-      <Demo active />
+    <div className={`${styles.menuStage} ${slug === "qr" ? styles.dark : ""} ${active ? styles.active : ""}`}>
+      <Demo active={active} />
     </div>
   );
 }

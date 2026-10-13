@@ -1,10 +1,12 @@
 // Recommended image sizes per platform (checked against each platform's guidelines, 2026).
+// Instagram's profile grid shows posts as 3:4 since 2025, hence the 1080 × 1440 option.
 
 export type Size = { id: string; platform: string; label: string; w: number; h: number; on?: boolean };
 
 export const SIZES: Size[] = [
   { id: "ig-square", platform: "Instagram", label: "Square post", w: 1080, h: 1080, on: true },
   { id: "ig-portrait", platform: "Instagram", label: "Portrait post", w: 1080, h: 1350, on: true },
+  { id: "ig-grid", platform: "Instagram", label: "3:4 grid post", w: 1080, h: 1440 },
   { id: "ig-story", platform: "Instagram", label: "Story and reel", w: 1080, h: 1920, on: true },
   { id: "li-post", platform: "LinkedIn", label: "Feed image", w: 1200, h: 627, on: true },
   { id: "li-square", platform: "LinkedIn", label: "Square post", w: 1200, h: 1200 },

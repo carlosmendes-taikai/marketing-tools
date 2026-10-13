@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/og";
 import { SpeedStudio } from "./SpeedStudio";
+import { RelatedGuides } from "@/components/RelatedGuides";
 import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
@@ -20,6 +21,7 @@ export default function SpeedPage() {
         </h1>
       </header>
       <SpeedStudio />
+      <RelatedGuides tool="speed" />
     </main>
   );
 }

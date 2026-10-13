@@ -6,17 +6,27 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  margin-left: 4px;
   border: 0;
-  background: transparent;
+  background: var(--accent);
+  color: #fff;
   font-size: 14px;
-  padding: 8px 14px;
+  font-weight: 500;
+  padding: 8px 16px;
   border-radius: 99px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.3s var(--spring);
 }
 
 .button:hover {
-  background: var(--soft);
+  background: var(--accent-ink);
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: scale(0.96);
 }
 
 .button svg {
@@ -29,8 +39,8 @@
 
 /* a little "drop into place" nudge when the tip appears */
 .on svg {
-  fill: var(--accent);
-  stroke: var(--accent);
+  fill: #fff;
+  stroke: #fff;
   animation: drop 0.6s var(--spring);
 }
 
