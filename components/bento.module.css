@@ -1,4 +1,5 @@
 .grid {
+  position: relative;
   display: grid;
   grid-auto-flow: dense; /* after a swap, cards repack so there are never holes */
   grid-template-columns: repeat(4, 1fr);
@@ -9,6 +10,8 @@
 
 .tile {
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
   background: var(--tile);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -630,4 +633,20 @@
 
 .reset:hover {
   color: var(--ink);
+}
+
+/* where the dragged card will land */
+.slot {
+  position: absolute;
+  z-index: 0;
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  opacity: 0.7;
+  pointer-events: none;
+  transition:
+    left 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    top 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }

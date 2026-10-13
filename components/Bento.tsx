@@ -55,7 +55,13 @@ type Drag = {
   y: number;
   started: boolean;
   lastTarget: string | null;
+  hoverTarget: string | null; // the card the mouse is resting on, and since when
+  hoverSince: number;
+  lastSwap: number;
 };
+
+const DWELL_MS = 140; // rest on a card this long before it moves aside
+const COOLDOWN_MS = 320; // and leave this long between swaps, so cards don't shuffle in a blur
 
 /** The landing grid. Cards can be dragged onto each other to swap places (mouse only); the order is remembered. */
 export function Bento() {
@@ -66,6 +72,27 @@ export function Bento() {
   const before = useRef<Map<string, DOMRect> | null>(null);
   const drag = useRef<Drag | null>(null);
   const suppressClick = useRef(false);
+  const slot = useRef<HTMLDivElement>(null);
+
+  /** The dashed outline that shows where the dragged card will land. */
+  function placeSlot() {
+    const d = drag.current;
+    const box = grid.current;
+    if (!d?.started || !box || !slot.current) return;
+    const r = d.el.getBoundingClientRect();
+    const g = box.getBoundingClientRect();
+    // the card's real slot is where it would be without the drag offset
+    const left = r.left - d.tx - g.left;
+    const top = r.top - d.ty - g.top;
+    const el = slot.current;
+    const first = !el.dataset.placed;
+    if (first) el.style.transition = "none"; // appear in place, then glide on later moves
+    Object.assign(el.style, { left: `${left}px`, top: `${top}px`, width: `${r.width / 1.03}px`, height: `${r.height / 1.03}px` });
+    if (first) {
+      el.dataset.placed = "1";
+      requestAnimationFrame(() => (el.style.transition = ""));
+    }
+  }
 
   useEffect(() => {
     let saved: string[] | null = null;
@@ -112,6 +139,7 @@ export function Bento() {
         d.tx = d.x - d.grabX - baseLeft;
         d.ty = d.y - d.grabY - baseTop;
         el.style.setProperty("--drag", `translate(${d.tx}px, ${d.ty}px)`);
+        placeSlot();
         continue;
       }
       const old = prev.get(slug);
@@ -119,12 +147,13 @@ export function Bento() {
       const now = el.getBoundingClientRect();
       const dx = old.left - now.left;
       const dy = old.top - now.top;
-      if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }], { duration: 420, easing: "cubic-bezier(0.3, 1.25, 0.5, 1)" });
+      if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }], { duration: 560, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
     }
   }, [order]);
 
   function onPointerDown(e: React.PointerEvent) {
     if (e.pointerType !== "mouse" || e.button !== 0) return;
+    e.preventDefault(); // stops the browser starting a text selection; clicks still work
     const el = (e.target as HTMLElement).closest<HTMLElement>("[data-slug]");
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -141,6 +170,9 @@ export function Bento() {
       y: e.clientY,
       started: false,
       lastTarget: null,
+      hoverTarget: null,
+      hoverSince: 0,
+      lastSwap: 0,
     };
 
     const move = (ev: PointerEvent) => {
@@ -151,6 +183,8 @@ export function Bento() {
         if (Math.hypot(ev.clientX - d.startX, ev.clientY - d.startY) < 6) return; // still just a click
         d.started = true;
         setDragging(d.slug);
+        window.getSelection()?.removeAllRanges();
+        document.body.style.userSelect = "none";
       }
       const rect = d.el.getBoundingClientRect();
       const baseLeft = rect.left - d.tx;
@@ -158,10 +192,27 @@ export function Bento() {
       d.tx = ev.clientX - d.grabX - baseLeft;
       d.ty = ev.clientY - d.grabY - baseTop;
       d.el.style.setProperty("--drag", `translate(${d.tx}px, ${d.ty}px)`);
+      placeSlot();
 
       // which card is under the mouse? (the dragged card ignores the mouse while moving)
-      const over = document.elementFromPoint(ev.clientX, ev.clientY)?.closest<HTMLElement>("[data-slug]")?.dataset.slug ?? null;
-      if (over && over !== d.slug && over !== d.lastTarget) {
+      // only its middle counts, so brushing past an edge doesn't trigger a swap
+      const overEl = document.elementFromPoint(ev.clientX, ev.clientY)?.closest<HTMLElement>("[data-slug]");
+      let over: string | null = null;
+      if (overEl) {
+        const r = overEl.getBoundingClientRect();
+        const inX = Math.abs(ev.clientX - (r.left + r.width / 2)) < r.width * 0.35;
+        const inY = Math.abs(ev.clientY - (r.top + r.height / 2)) < r.height * 0.35;
+        if (inX && inY) over = overEl.dataset.slug!;
+      }
+      const now = performance.now();
+      if (over !== d.hoverTarget) {
+        d.hoverTarget = over;
+        d.hoverSince = now;
+      }
+      const rested = now - d.hoverSince >= DWELL_MS;
+      const cooled = now - d.lastSwap >= COOLDOWN_MS;
+      if (over && over !== d.slug && over !== d.lastTarget && rested && cooled) {
+        d.lastSwap = now;
         snapshot();
         setOrder((o) => {
           const next = [...o];
@@ -171,18 +222,25 @@ export function Bento() {
           return next;
         });
       }
-      d.lastTarget = over;
+      if (over !== d.lastTarget && (over === null || rested)) d.lastTarget = over;
     };
+    // resting still over a card should also swap, even without moving the mouse
+    const dwellTimer = setInterval(() => {
+      const d = drag.current;
+      if (d?.started) move(new PointerEvent("pointermove", { clientX: d.x, clientY: d.y }));
+    }, 60);
 
     const up = () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
+      clearInterval(dwellTimer);
+      document.body.style.userSelect = "";
       const d = drag.current;
       drag.current = null;
       if (!d?.started) return;
       suppressClick.current = true; // the release after a drag isn't a click
       setTimeout(() => (suppressClick.current = false), 0);
-      d.el.animate([{ transform: `translate(${d.tx}px, ${d.ty}px)` }, { transform: "translate(0, 0)" }], { duration: 380, easing: "cubic-bezier(0.3, 1.3, 0.5, 1)" });
+      d.el.animate([{ transform: `translate(${d.tx}px, ${d.ty}px) scale(1.03)` }, { transform: "translate(0, 0)" }], { duration: 480, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
       d.el.style.removeProperty("--drag");
       setDragging(null);
     };
@@ -197,6 +255,7 @@ export function Bento() {
   return (
     <>
       <div id="tools" ref={grid} className={`${styles.grid} ${dragging ? styles.sorting : ""}`} onPointerDown={onPointerDown}>
+        {dragging && <div ref={slot} className={styles.slot} aria-hidden />}
         {order.map((slug, i) => (
           <Tile
             key={slug}
