@@ -12,9 +12,9 @@ Small tools that each do one job well. No account, no paywall, nothing to upgrad
 | Link preview | `/preview` | Live |
 | LinkedIn post formatter | `/linkedin` | Live |
 | Image resizer | `/resize` | Live |
+| Headline analyzer | `/headline` | Live |
 
 
-More on the way: headline analyzer.
 
 ## Run it locally
 
