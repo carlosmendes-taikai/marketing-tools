@@ -1,5 +1,5 @@
-// Placeholder name until we pick the real one. Change it here and it updates everywhere.
-export const SITE_NAME = "untitled.tools";
+// The site name, used in the logo, titles and share images. Change it here and it updates everywhere.
+export const SITE_NAME = "mktbox";
 export const AUTHOR = "Carlos Mendes";
 export const GITHUB_URL = "https://github.com/carlosmendes-taikai/marketing-tools";
 

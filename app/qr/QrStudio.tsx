@@ -114,7 +114,7 @@ export function QrStudio() {
       height: RENDER,
       margin: style.shape === "circle" ? 0 : 40,
       shape: style.shape,
-      data: data || "https://untitled.tools",
+      data: data || "https://mktbox.xyz",
       image: logo ?? undefined,
       qrOptions: { errorCorrectionLevel: logo ? "H" : "Q" },
       imageOptions: { hideBackgroundDots: true, imageSize: logoSize, margin: 14, saveAsBlob: true },

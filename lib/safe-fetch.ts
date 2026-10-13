@@ -4,7 +4,7 @@ import { isIP } from "node:net";
 // Fetches public web pages only. Every hop (including redirects) is checked so the
 // server can't be pointed at private networks, cloud metadata or localhost.
 
-const UA = "Mozilla/5.0 (compatible; NoPaywallPreview/1.0; +https://nopaywall.vercel.app/preview)";
+const UA = "Mozilla/5.0 (compatible; MktboxPreview/1.0; +https://mktbox.xyz/preview)";
 
 function privateV4(ip: string) {
   const [a, b] = ip.split(".").map(Number);

@@ -1,6 +1,6 @@
 import { ogImage, ogSize } from "@/lib/og";
 
-export const alt = "UTM builder, free on untitled.tools";
+export const alt = "UTM builder, free on mktbox";
 export const size = ogSize;
 export const contentType = "image/png";
 

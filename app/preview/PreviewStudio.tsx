@@ -5,7 +5,7 @@ import type { Check, PageMeta } from "@/lib/preview";
 import ui from "@/components/tool.module.css";
 import styles from "./preview.module.css";
 
-const EXAMPLES = ["github.com", "nopaywall.vercel.app/qr", "stripe.com"];
+const EXAMPLES = ["github.com", "mktbox.xyz/qr", "stripe.com"];
 
 type Result = { meta: PageMeta; checks: Check[]; score: number; suggested: string };
 

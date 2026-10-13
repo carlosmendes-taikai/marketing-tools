@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/site";
 
-export const SITE_URL = "https://nopaywall.vercel.app";
+export const SITE_URL = "https://mktbox.xyz";
 export const ogSize = { width: 1200, height: 630 };
 
 /** Title, description, canonical and share tags for a page, all kept in step. */

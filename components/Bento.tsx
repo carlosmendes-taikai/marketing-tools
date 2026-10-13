@@ -218,7 +218,7 @@ function Gauge({ target, active }: { target: number; active: boolean }) {
 }
 
 const UTM: [boolean, string][] = [
-  [false, "untitled.tools/qr"],
+  [false, "mktbox.xyz/qr"],
   [true, "?utm_source="],
   [false, "linkedin"],
   [true, "&utm_medium="],
@@ -265,7 +265,7 @@ function PreviewDemo({ active }: DemoProps) {
         <div className={styles.cardImg} />
         <div className={styles.cardTx}>
           <b>Free marketing tools</b>
-          <span>untitled.tools</span>
+          <span>mktbox.xyz</span>
         </div>
       </div>
     </div>
