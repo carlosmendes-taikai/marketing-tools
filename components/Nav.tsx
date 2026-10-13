@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE_NAME, GITHUB_URL } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 import styles from "./chrome.module.css";
 
 export function Nav() {
@@ -17,9 +17,6 @@ export function Nav() {
         </Link>
         <div className={styles.links}>
           <Link href="/#tools">Tools</Link>
-          <a href={GITHUB_URL} className={styles.dark} target="_blank" rel="noreferrer">
-            GitHub
-          </a>
         </div>
       </div>
     </nav>

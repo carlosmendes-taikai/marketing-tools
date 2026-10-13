@@ -49,6 +49,7 @@
 .optionsRow {
   display: flex;
   flex-wrap: wrap;
+  flex-wrap: wrap;
   align-items: center;
   gap: 14px;
   margin-top: 12px;
@@ -611,4 +612,40 @@
   .searchRow button {
     padding: 14px;
   }
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.examples span {
+  margin-right: 2px;
+}
+
+.examples button {
+  border: 0;
+  background: var(--soft);
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.examples button:hover {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.optionsRow .examples {
+  margin-top: 0;
 }

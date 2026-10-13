@@ -1,5 +1,8 @@
 import { Bento } from "@/components/Bento";
+import type { Metadata } from "next";
 import styles from "./home.module.css";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (

@@ -29,8 +29,9 @@ export function ImageField({ value, onChange, hint }: { value: string; onChange:
         onUploadProgress: ({ percentage }) => setProgress(percentage),
       });
       onChange(blob.url);
-    } catch {
-      setError("Upload failed. Try again, or paste a link instead.");
+    } catch (e) {
+      const msg = (e as Error).message ?? "";
+      setError(/limit/i.test(msg) ? "Upload limit reached for now. Try again in an hour, or paste a link instead." : "Upload failed. Try again, or paste a link instead.");
     } finally {
       setProgress(null);
     }

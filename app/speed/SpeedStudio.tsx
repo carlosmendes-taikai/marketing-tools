@@ -15,6 +15,8 @@ const STEPS = [
   "Writing up what to fix first",
 ];
 
+const EXAMPLES = ["nopaywall.vercel.app", "github.com", "bbc.com"];
+
 const RATING_WORD: Record<Rating, string> = { good: "Good", ok: "Needs work", poor: "Poor" };
 
 export function SpeedStudio() {
@@ -85,6 +87,23 @@ export function SpeedStudio() {
             ))}
           </div>
           <span className={styles.note}>Powered by Google Lighthouse, explained in plain English.</span>
+          {!report && !running && (
+            <div className={styles.examples}>
+              <span>Try</span>
+              {EXAMPLES.map((ex) => (
+                <button
+                  type="button"
+                  key={ex}
+                  onClick={() => {
+                    setInput(ex);
+                    audit(ex);
+                  }}
+                >
+                  {ex}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </form>
 

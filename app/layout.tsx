@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Schibsted_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { SITE_NAME } from "@/lib/site";
@@ -24,7 +25,6 @@ export const metadata: Metadata = {
   },
   description: "Small free tools that each do one job well. No account, nothing to upgrade.",
   metadataBase: new URL(SITE_URL),
-  alternates: { canonical: "/" },
   openGraph: {
     title: `${SITE_NAME} · Free marketing tools, no paywall`,
     description: "Small free tools that each do one job well. No account, nothing to upgrade.",
@@ -42,6 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Nav />
         {children}
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

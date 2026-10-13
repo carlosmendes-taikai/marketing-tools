@@ -1,7 +1,7 @@
 // Placeholder name until we pick the real one. Change it here and it updates everywhere.
 export const SITE_NAME = "untitled.tools";
 export const AUTHOR = "Carlos Mendes";
-export const GITHUB_URL = "https://github.com";
+export const GITHUB_URL = "https://github.com/carlosmendes-taikai/marketing-tools";
 
 export type Tool = {
   slug: string;

@@ -5,6 +5,8 @@ import type { Check, PageMeta } from "@/lib/preview";
 import ui from "@/components/tool.module.css";
 import styles from "./preview.module.css";
 
+const EXAMPLES = ["github.com", "nopaywall.vercel.app/qr", "stripe.com"];
+
 type Result = { meta: PageMeta; checks: Check[]; score: number; suggested: string };
 
 export function PreviewStudio() {
@@ -48,6 +50,23 @@ export function PreviewStudio() {
             {loading ? "Checking…" : "Check link"}
           </button>
         </div>
+        {!result && !loading && (
+          <div className={styles.examples}>
+            <span>Try</span>
+            {EXAMPLES.map((ex) => (
+              <button
+                type="button"
+                key={ex}
+                onClick={() => {
+                  setInput(ex);
+                  check(ex);
+                }}
+              >
+                {ex}
+              </button>
+            ))}
+          </div>
+        )}
       </form>
 
       {error && !loading && <div className={styles.error}>{error}</div>}
