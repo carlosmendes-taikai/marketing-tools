@@ -19,6 +19,6 @@ export const TOOLS: Tool[] = [
   { slug: "utm", name: "UTM builder", blurb: "Tagged links, each with its own QR, saved for later.", live: true },
   { slug: "preview", name: "Link preview", blurb: "See your link on LinkedIn, X and WhatsApp before you share it.", live: true },
   { slug: "linkedin", name: "LinkedIn post formatter", blurb: "Bold, italic and lists, plus where \"…more\" cuts your post.", live: true },
-  { slug: "resize", name: "Image resizer", blurb: "One image, every social size, one zip.", live: false },
+  { slug: "resize", name: "Image resizer", blurb: "One image, every social size, one zip.", live: true },
   { slug: "headline", name: "Headline analyzer", blurb: "Score your hook before you hit post.", live: false },
 ];

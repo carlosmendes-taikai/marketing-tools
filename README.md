@@ -11,9 +11,10 @@ Small tools that each do one job well. No account, no paywall, nothing to upgrad
 | UTM builder | `/utm` | Live |
 | Link preview | `/preview` | Live |
 | LinkedIn post formatter | `/linkedin` | Live |
+| Image resizer | `/resize` | Live |
 
 
-More on the way: image resizer, headline analyzer.
+More on the way: headline analyzer.
 
 ## Run it locally
 
