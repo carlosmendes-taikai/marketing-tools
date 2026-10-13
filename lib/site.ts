@@ -22,6 +22,7 @@ export const TOOLS: Tool[] = [
   { slug: "linkedin", name: "LinkedIn post formatter", blurb: "Bold, italic and lists, plus where \"…more\" cuts your post.", live: true },
   { slug: "resize", name: "Image resizer", blurb: "One image, every social size, one zip.", live: true },
   { slug: "headline", name: "Headline analyzer", blurb: "Score your hook before you hit post.", live: true },
+  { slug: "gif", name: "GIF animator", blurb: "Turn a logo or banner into a subtle animated GIF.", live: true },
 ];
 
 /** A tool name mid-sentence: "the email signature", but "the UTM builder" and "the LinkedIn post formatter". */

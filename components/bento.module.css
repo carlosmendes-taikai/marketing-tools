@@ -735,3 +735,96 @@
 .vibeOn.v_fail i {
   background: #d1493f;
 }
+
+/* gif animator: the mark, animated */
+.gif {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.gifMark {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 30px);
+  gap: 7px;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.gifMark i {
+  height: 30px;
+  border-radius: 9px;
+  background: var(--ink);
+}
+
+.gifMark i:nth-child(2) {
+  background: var(--accent);
+}
+
+.gifMark.fx0::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.75) 50%, transparent 70%);
+  animation: gshine 1.6s ease-in-out;
+}
+
+.gifMark.fx1 {
+  animation: gfloat 1.8s ease-in-out;
+}
+
+.gifMark.fx2 {
+  animation: gpulse 1.8s ease-in-out;
+}
+
+.gifMark.fx3 {
+  animation: gdrop 1.2s var(--spring);
+}
+
+.gifTabs {
+  display: grid;
+  gap: 4px;
+}
+
+.gifTabs span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  padding: 3px 10px;
+  border-radius: 99px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.gifTabs span.act {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+@keyframes gshine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes gfloat {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes gpulse {
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes gdrop {
+  from {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+}

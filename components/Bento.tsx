@@ -15,6 +15,9 @@ const SIZE: Record<string, string> = {
   utm: styles.wide,
   resize: styles.wide,
   headline: styles.wide,
+  preview: styles.wide,
+  linkedin: styles.wide,
+  gif: styles.wide,
 };
 
 const DEMOS: Record<string, ComponentType<DemoProps>> = {
@@ -28,6 +31,7 @@ const DEMOS: Record<string, ComponentType<DemoProps>> = {
   linkedin: LinkedinDemo,
   resize: ResizeDemo,
   headline: HeadlineDemo,
+  gif: GifDemo,
 };
 
 /** One tool's demo, playing, for use outside the landing grid (the nav's Tools menu). */
@@ -492,6 +496,30 @@ function VibeDemo({ active }: DemoProps) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+const GIF_FX = ["Shine", "Float", "Pulse", "Drop in"];
+
+/** The logo mark, animated with each effect in turn. */
+function GifDemo({ active }: DemoProps) {
+  const i = useTicker(1800, GIF_FX.length, active);
+  return (
+    <div className={styles.gif}>
+      <div className={`${styles.gifMark} ${active ? styles[`fx${i}`] : ""}`} key={active ? i : "idle"}>
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+      <div className={styles.gifTabs}>
+        {GIF_FX.map((n, k) => (
+          <span key={n} className={active && k === i ? styles.act : ""}>
+            {n}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
