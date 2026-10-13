@@ -25,3 +25,11 @@ export const TOOLS: Tool[] = [
 
 /** A tool name mid-sentence: "the email signature", but "the UTM builder" and "the LinkedIn post formatter". */
 export const nameInSentence = (name: string) => (/^[A-Z][a-z]+\b/.test(name) ? name[0].toLowerCase() + name.slice(1) : name);
+
+/** Cover subtitle and alt text, falling back to sensible defaults when left empty in the editor. */
+export function coverText(post: { title: string; tool: string; subtitle?: string; coverAlt?: string }) {
+  const tool = TOOLS.find((t) => t.slug === post.tool);
+  const subtitle = post.subtitle?.trim() || (tool ? `A plain-English guide, with the free ${nameInSentence(tool.name)}` : "A plain-English guide by mktbox");
+  const coverAlt = post.coverAlt?.trim() || `Cover image with the title "${post.title}" and the mktbox logo`;
+  return { subtitle, coverAlt };
+}

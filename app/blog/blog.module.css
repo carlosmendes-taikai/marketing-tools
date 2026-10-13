@@ -94,6 +94,18 @@
   animation: rise 0.6s var(--ease) both;
 }
 
+.cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--soft);
+  margin-bottom: 36px;
+  animation: rise 0.6s 0.08s var(--ease) both;
+}
+
 .back {
   display: inline-block;
   font-size: 14px;

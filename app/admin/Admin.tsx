@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Doc, Store } from "@/lib/cms";
 import { renderMarkdown, slugify, TOOL_MARKER } from "@/lib/markdown";
-import { TOOLS } from "@/lib/site";
+import { TOOLS, coverText } from "@/lib/site";
 import prose from "../blog/blog.module.css";
 import styles from "./admin.module.css";
 
@@ -246,6 +246,13 @@ function Editor({
   const slug = slugify(doc.slug);
   const rendered = useMemo(() => renderMarkdown(doc.body), [doc.body]);
   const tool = TOOLS.find((t) => t.slug === doc.tool);
+  const defaults = coverText({ title: doc.title || "Untitled", tool: doc.tool });
+  const coverQuery = `title=${encodeURIComponent(doc.title || "Untitled")}&subtitle=${encodeURIComponent(doc.subtitle?.trim() || defaults.subtitle)}`;
+  const [coverSrc, setCoverSrc] = useState(`/api/admin/cover?${coverQuery}`);
+  useEffect(() => {
+    const t = setTimeout(() => setCoverSrc(`/api/admin/cover?${coverQuery}`), 600); // redraw once typing pauses
+    return () => clearTimeout(t);
+  }, [coverQuery]);
   const liveSlugChanged = !isNew && initial.status === "published" && slug !== initial.slug;
 
   const checks = useMemo(() => {
@@ -406,6 +413,12 @@ function Editor({
           <Field label="Meta description" count={doc.description.length} max={160} min={120}>
             <textarea rows={3} value={doc.description} placeholder="One or two sentences for Google and share cards." onChange={(e) => set("description", e.target.value)} />
           </Field>
+          <Field label="Cover subtitle" count={(doc.subtitle ?? "").length} max={70}>
+            <input value={doc.subtitle ?? ""} placeholder={defaults.subtitle} onChange={(e) => set("subtitle", e.target.value)} />
+          </Field>
+          <Field label="Cover alt text" hint={doc.coverAlt?.trim() ? undefined : "Left empty, it describes the cover from the title."}>
+            <input value={doc.coverAlt ?? ""} placeholder={defaults.coverAlt} onChange={(e) => set("coverAlt", e.target.value)} />
+          </Field>
           <div className={styles.pair}>
             <Field label="Tool">
               <select value={doc.tool} onChange={(e) => set("tool", e.target.value)}>
@@ -465,6 +478,8 @@ function Editor({
             <div className={styles.page}>
               <h1 className={styles.pageTitle}>{doc.title || "Untitled"}</h1>
               {doc.description && <p className={prose.lead}>{doc.description}</p>}
+              {/* eslint-disable-next-line @next/next/no-img-element -- generated preview */}
+              <img className={prose.cover} src={coverSrc} alt={doc.coverAlt?.trim() || defaults.coverAlt} width={1200} height={630} />
               <div className={prose.prose} dangerouslySetInnerHTML={{ __html: before }} />
               {after && <div className={styles.toolSlot}>{tool ? `${tool.name} card` : "Tool card (pick a tool)"}</div>}
               {after && <div className={prose.prose} dangerouslySetInnerHTML={{ __html: after }} />}

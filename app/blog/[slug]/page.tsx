@@ -20,7 +20,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = await getPost((await params).slug);
   if (!post) return {};
   const base = pageMetadata(post.title, post.description, `/blog/${post.slug}`);
-  return { ...base, openGraph: { ...base.openGraph, type: "article", publishedTime: post.date, authors: [AUTHOR] } };
+  const images = [{ url: post.cover, width: 1200, height: 630, alt: post.coverAlt }];
+  return {
+    ...base,
+    openGraph: { ...base.openGraph, type: "article", publishedTime: post.date, modifiedTime: post.updated, authors: [AUTHOR], images },
+    twitter: { ...base.twitter, images },
+  };
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -43,7 +48,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       description: post.description,
       datePublished: post.date,
       dateModified: post.updated.slice(0, 10),
-      image: `${url}/opengraph-image`,
+      image: `${SITE_URL}${post.cover}`,
       mainEntityOfPage: url,
       author: { "@type": "Person", name: AUTHOR, url: "https://mendes.cc" },
       publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
@@ -82,6 +87,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               {AUTHOR} · {formatDate(post.date)} · {post.minutes} min read
             </p>
           </header>
+          {/* eslint-disable-next-line @next/next/no-img-element -- already a sized PNG from our own route */}
+          <img className={styles.cover} src={post.cover} alt={post.coverAlt} width={1200} height={630} fetchPriority="high" />
           <div className={styles.prose} dangerouslySetInnerHTML={{ __html: before }} />
           {tool && after && <ToolCta slug={tool.slug} />}
           {after && <div className={styles.prose} dangerouslySetInnerHTML={{ __html: after }} />}

@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { loadStore } from "./cms";
 import { renderMarkdown, type Rendered } from "./markdown";
+import { coverText } from "./site";
 
 export { TOOL_MARKER } from "./markdown";
 
@@ -16,6 +17,9 @@ export type Post = Rendered & {
   date: string;
   updated: string;
   tool: string;
+  subtitle: string;
+  coverAlt: string;
+  cover: string; // path to the cover image, versioned so caches refresh after an edit
 };
 
 /** Every published article, newest first. */
@@ -26,7 +30,17 @@ export async function getPosts(): Promise<Post[]> {
   const { posts } = await loadStore();
   return posts
     .filter((p) => p.status === "published")
-    .map(({ slug, title, description, date, updated, tool, body }) => ({ slug, title, description, date, updated, tool, ...renderMarkdown(body) }))
+    .map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      description: p.description,
+      date: p.date,
+      updated: p.updated,
+      tool: p.tool,
+      ...coverText(p),
+      cover: `/blog/${p.slug}/cover?v=${Date.parse(p.updated).toString(36)}`,
+      ...renderMarkdown(p.body),
+    }))
     .sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
 }
 

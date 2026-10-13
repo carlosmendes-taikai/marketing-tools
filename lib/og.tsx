@@ -17,7 +17,7 @@ export function pageMetadata(title: string, description: string, path: string): 
 }
 
 /** Fetches just the glyphs needed from Google Fonts, as TTF (the format the image renderer reads). */
-async function googleFont(family: string, weight: number, text: string): Promise<ArrayBuffer | null> {
+export async function googleFont(family: string, weight: number, text: string): Promise<ArrayBuffer | null> {
   try {
     const css = await (await fetch(`https://fonts.googleapis.com/css2?family=${family.replace(/ /g, "+")}:wght@${weight}&text=${encodeURIComponent(text)}`, { cache: "force-cache" })).text();
     const src = css.match(/src: url\((.+?)\) format\('(opentype|truetype)'\)/)?.[1];

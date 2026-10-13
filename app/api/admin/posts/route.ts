@@ -48,6 +48,8 @@ export async function PUT(request: Request) {
     tool,
     status: input.status === "draft" ? "draft" : "published",
     body: String(input.body ?? ""),
+    subtitle: String(input.subtitle ?? "").trim(),
+    coverAlt: String(input.coverAlt ?? "").trim(),
   };
 
   // renamed: send the old address (and anything that pointed at it) to the new one

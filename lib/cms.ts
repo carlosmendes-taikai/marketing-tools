@@ -19,6 +19,8 @@ export type Doc = {
   tool: string;
   status: "draft" | "published";
   body: string; // Markdown
+  subtitle?: string; // second line on the cover image
+  coverAlt?: string; // alt text for the cover; generated from the title when empty
 };
 
 export type Store = {
