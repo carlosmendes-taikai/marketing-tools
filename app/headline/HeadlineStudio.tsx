@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { analyze, CONTEXTS, type Analysis, type Context, type WordKind } from "@/lib/headline";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { analyze, CONTEXTS, FORMULAS, PART_LABEL, type Analysis, type Context, type WordKind } from "@/lib/headline";
 import ui from "@/components/tool.module.css";
 import styles from "./headline.module.css";
 
@@ -9,12 +9,14 @@ const HISTORY_KEY = "headline-history-v1";
 type Saved = { text: string; context: Context; score: number };
 
 const KIND_LABEL: Record<WordKind, string> = { power: "Power", emotional: "Emotional", uncommon: "Uncommon", common: "Common" };
-const KIND_TARGET: Record<WordKind, string> = { power: "at least one", emotional: "10 to 15%", uncommon: "10 to 45%", common: "20 to 30%" };
+const tone = (v: number) => (v >= 80 ? styles.pass : v >= 65 ? styles.warn : styles.fail);
 
 export function HeadlineStudio() {
   const [text, setText] = useState("");
   const [context, setContext] = useState<Context>("seo");
+  const [keyword, setKeyword] = useState("");
   const [history, setHistory] = useState<Saved[]>([]);
+  const input = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     let saved: Saved[] = [];
@@ -24,50 +26,81 @@ export function HeadlineStudio() {
     queueMicrotask(() => setHistory(saved));
   }, []);
 
-  const a = useMemo(() => analyze(text, context), [text, context]);
+  const a = useMemo(() => analyze(text, context, keyword), [text, context, keyword]);
   const has = a.text.length > 0;
 
-  function remember() {
-    if (!has) return;
-    const next = [{ text: a.text, context, score: a.score }, ...history.filter((h) => !(h.text === a.text && h.context === context))].slice(0, 10);
+  function remember(t = a.text, s = a.score) {
+    if (!t) return;
+    const next = [{ text: t, context, score: s }, ...history.filter((h) => !(h.text === t && h.context === context))].slice(0, 10);
     setHistory(next);
     try {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
     } catch {}
   }
 
+  function clear() {
+    remember();
+    setText("");
+    input.current?.focus();
+  }
+
   return (
     <div className={styles.studio}>
       <section className={`${ui.panel} ${styles.inputPanel}`} style={{ animationDelay: "0.2s" }}>
-        <div className={ui.segment}>
-          {CONTEXTS.map((c) => (
-            <button key={c.id} className={context === c.id ? ui.on : ""} onClick={() => setContext(c.id)}>
-              {c.label}
-            </button>
-          ))}
-        </div>
-        <textarea
-          className={styles.input}
-          rows={2}
-          value={text}
-          placeholder="Type your headline"
-          onChange={(e) => setText(e.target.value.replace(/\n/g, " "))}
-          onBlur={remember}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              remember();
-            }
-          }}
-        />
-        {has && (
-          <p className={styles.words} aria-label="Your headline, coloured by word type">
-            {a.words.map((w, i) => (
-              <span key={i} className={styles[w.kind]}>
-                {w.word}
-              </span>
+        <div className={styles.topRow}>
+          <div className={ui.segment}>
+            {CONTEXTS.map((c) => (
+              <button key={c.id} className={context === c.id ? ui.on : ""} onClick={() => setContext(c.id)}>
+                {c.label}
+              </button>
             ))}
-          </p>
+          </div>
+          {context === "seo" && (
+            <input className={styles.keyword} value={keyword} placeholder="Target keyword (optional)" spellCheck={false} onChange={(e) => setKeyword(e.target.value)} />
+          )}
+        </div>
+        <div className={styles.inputWrap}>
+          <textarea
+            ref={input}
+            className={styles.input}
+            rows={2}
+            value={text}
+            placeholder="Type your headline"
+            onChange={(e) => setText(e.target.value.replace(/\n/g, " "))}
+            onBlur={() => remember()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                remember();
+              }
+            }}
+          />
+          {text && (
+            <button className={styles.clear} onClick={clear} aria-label="Clear headline" title="Clear">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          )}
+        </div>
+        {has && (
+          <div className={styles.wordsRow}>
+            <p className={styles.words} aria-label="Your headline, coloured by word type">
+              {a.words.map((w, i) => (
+                <span key={i} className={styles[w.kind]}>
+                  {w.word}
+                </span>
+              ))}
+            </p>
+            <div className={styles.legend}>
+              {(["power", "emotional", "uncommon", "common"] as WordKind[]).map((k) => (
+                <span key={k}>
+                  <i className={styles[k]} />
+                  {KIND_LABEL[k]}
+                </span>
+              ))}
+            </div>
+          </div>
         )}
       </section>
 
@@ -83,10 +116,6 @@ export function HeadlineStudio() {
                   <dd>{a.type}</dd>
                 </div>
                 <div>
-                  <dt>Tone</dt>
-                  <dd>{a.sentiment}</dd>
-                </div>
-                <div>
                   <dt>Length</dt>
                   <dd>
                     {a.chars} chars · {a.words.length} words
@@ -97,19 +126,22 @@ export function HeadlineStudio() {
           </section>
 
           <section className={styles.card} style={{ animationDelay: "60ms" }}>
-            <h3>Word balance</h3>
+            <h3>Score breakdown</h3>
             <div className={styles.bars}>
-              {(["power", "emotional", "uncommon", "common"] as WordKind[]).map((k) => (
-                <div key={k} className={styles.barRow}>
-                  <span className={`${styles.dot} ${styles[k]}`} />
-                  <span className={styles.barLabel}>{KIND_LABEL[k]}</span>
-                  <div className={styles.track}>
-                    <i className={styles[k]} style={{ width: `${Math.round(a.balance[k] * 100)}%` }} />
-                  </div>
-                  <span className={styles.pct}>{Math.round(a.balance[k] * 100)}%</span>
-                  <small>{KIND_TARGET[k]}</small>
-                </div>
-              ))}
+              {[...a.parts]
+                .sort((x, y) => y.weight - x.weight)
+                .map((p) => {
+                  const pct = Math.round(p.value * 100);
+                  return (
+                    <div key={p.id} className={styles.barRow}>
+                      <span className={styles.barLabel}>{PART_LABEL[p.id]}</span>
+                      <div className={styles.track}>
+                        <i className={tone(pct)} style={{ width: `${Math.max(3, pct)}%` }} />
+                      </div>
+                      <span className={styles.pct}>{pct}</span>
+                    </div>
+                  );
+                })}
             </div>
           </section>
 
@@ -139,8 +171,18 @@ export function HeadlineStudio() {
           </section>
         </div>
       ) : (
-        <p className={styles.empty}>Your score, word balance and previews appear as you type. Try a few versions and compare them below.</p>
+        <p className={styles.empty}>Type a headline, or start from one of the formulas below.</p>
       )}
+
+      <Formulas
+        context={context}
+        onPick={(example) => {
+          remember();
+          setText(example);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          input.current?.focus();
+        }}
+      />
 
       {history.length > 0 && (
         <section className={`${ui.panel} ${styles.history}`}>
@@ -156,7 +198,7 @@ export function HeadlineStudio() {
                       setContext(h.context);
                     }}
                   >
-                    <span className={`${styles.pill} ${h.score >= 80 ? styles.pass : h.score >= 65 ? styles.warn : styles.fail}`}>{h.score}</span>
+                    <span className={`${styles.pill} ${tone(h.score)}`}>{h.score}</span>
                     <span className={styles.histText}>{h.text}</span>
                     <small>{CONTEXTS.find((c) => c.id === h.context)?.label}</small>
                   </button>
@@ -169,12 +211,43 @@ export function HeadlineStudio() {
   );
 }
 
+/** Proven patterns for the chosen format, each with a worked example and its live score. */
+function Formulas({ context, onPick }: { context: Context; onPick: (example: string) => void }) {
+  return (
+    <section className={`${ui.panel} ${styles.formulas}`}>
+      <h2>Formulas that work</h2>
+      <p className={styles.formulaNote}>Patterns that consistently win clicks for {CONTEXTS.find((c) => c.id === context)!.label.toLowerCase()}s. Pick one and swap in your own details.</p>
+      <ul key={context}>
+        {FORMULAS[context].map((f, i) => {
+          const score = analyze(f.example, context).score;
+          return (
+            <li key={f.example} style={{ animationDelay: `${i * 50}ms` }}>
+              <button onClick={() => onPick(f.example)}>
+                <span className={styles.formula}>
+                  {f.formula.split(/(\[[^\]]+\])/).map((part, j) =>
+                    part.startsWith("[") ? (
+                      <em key={j}>{part.slice(1, -1)}</em>
+                    ) : (
+                      <span key={j}>{part}</span>
+                    ),
+                  )}
+                </span>
+                <span className={styles.example}>{f.example}</span>
+                <span className={`${styles.pill} ${tone(score)}`}>{score}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 function Ring({ value }: { value: number }) {
   const r = 52;
   const c = 2 * Math.PI * r;
-  const tone = value >= 80 ? styles.pass : value >= 65 ? styles.warn : styles.fail;
   return (
-    <div className={`${styles.ring} ${tone}`}>
+    <div className={`${styles.ring} ${tone(value)}`}>
       <svg width="128" height="128" viewBox="0 0 128 128" aria-hidden>
         <circle cx="64" cy="64" r={r} className={styles.ringBg} />
         <circle cx="64" cy="64" r={r} className={styles.ringFg} strokeDasharray={c} strokeDashoffset={c * (1 - value / 100)} />
@@ -207,7 +280,7 @@ function Previews({ a, context }: { a: Analysis; context: Context }) {
             <b>Your brand</b>
             <span>9:41</span>
           </div>
-          <span className={styles.subject}>{cut(a.text, 40)}</span>
+          <span className={styles.subject}>{cut(a.text.replace(/\{first_name\}/i, "Sam"), 40)}</span>
           <span className={styles.gLine} style={{ width: "85%" }} />
         </div>
       </div>

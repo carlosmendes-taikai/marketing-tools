@@ -20,8 +20,64 @@
   gap: 14px;
 }
 
+.topRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.keyword {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 99px;
+  padding: 8px 16px;
+  font-size: 14px;
+  width: 240px;
+  outline: none;
+  animation: pop 0.3s var(--spring);
+}
+
+.keyword:focus {
+  border-color: var(--accent);
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.clear {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--soft);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  animation: pop 0.25s var(--spring);
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.3s var(--spring);
+}
+
+.clear:hover {
+  background: var(--ink);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
 .input {
   width: 100%;
+  field-sizing: content; /* grows with long headlines where supported */
+  min-height: 2.6em;
+  padding-right: 48px !important;
   border: 0;
   outline: none;
   resize: none;
@@ -37,12 +93,52 @@
   color: #c9c6be;
 }
 
+.wordsRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--soft);
+}
+
 .words {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 8px;
-  padding-top: 12px;
-  border-top: 1px solid var(--soft);
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.legend .power {
+  background: var(--k-power);
+}
+.legend .emotional {
+  background: var(--k-emotional);
+}
+.legend .uncommon {
+  background: var(--k-uncommon);
+}
+.legend .common {
+  background: var(--k-common);
 }
 
 .words span {
@@ -198,12 +294,26 @@
   gap: 12px;
 }
 
+.bars {
+  gap: 10px !important;
+}
+
 .barRow {
   display: grid;
-  grid-template-columns: 10px 84px 1fr 40px 84px;
+  grid-template-columns: 112px 1fr 30px;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-size: 14px;
+}
+
+.track i.pass {
+  background: var(--good);
+}
+.track i.warn {
+  background: var(--okc);
+}
+.track i.fail {
+  background: var(--poor);
 }
 
 .dot {
@@ -538,12 +648,79 @@
     font-size: 24px;
   }
   .barRow {
-    grid-template-columns: 10px 76px 1fr 36px;
+    grid-template-columns: 100px 1fr 30px;
   }
-  .barRow small {
+  .legend {
     display: none;
+  }
+  .formulas button {
+    grid-template-columns: 1fr auto !important;
+  }
+  .formula {
+    grid-column: 1 / -1;
   }
   .history small {
     display: none;
   }
+}
+
+/* formulas */
+.formulas h2 {
+  font-size: 18px !important;
+  margin-bottom: 4px !important;
+}
+
+.formulaNote {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.formulas ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.formulas li {
+  animation: rise 0.4s var(--ease) both;
+}
+
+.formulas button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 8px;
+  border: 0;
+  border-top: 1px solid var(--soft);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.formulas button:hover {
+  background: var(--soft);
+}
+
+.formula {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.formula em {
+  font-style: normal;
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+  border-radius: 5px;
+  padding: 0 5px;
+  margin: 0 1px;
+}
+
+.example {
+  font-size: 15px;
+  font-weight: 500;
 }
