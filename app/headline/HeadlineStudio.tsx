@@ -9,6 +9,7 @@ const HISTORY_KEY = "headline-history-v1";
 type Saved = { text: string; context: Context; score: number };
 
 const KIND_LABEL: Record<WordKind, string> = { power: "Power", emotional: "Emotional", uncommon: "Uncommon", common: "Common" };
+const FORMAT_NAME: Record<Context, string> = { seo: "blog and SEO titles", linkedin: "LinkedIn hooks", email: "email subjects", ad: "ad headlines" };
 const tone = (v: number) => (v >= 80 ? styles.pass : v >= 65 ? styles.warn : styles.fail);
 
 export function HeadlineStudio() {
@@ -36,6 +37,13 @@ export function HeadlineStudio() {
     try {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
     } catch {}
+  }
+
+  function pickFormula(example: string) {
+    remember();
+    setText(example);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    input.current?.focus();
   }
 
   function clear() {
@@ -160,6 +168,8 @@ export function HeadlineStudio() {
             </ul>
           </section>
 
+          <Formulas context={context} onPick={pickFormula} className={styles.wide} />
+
           <section className={`${styles.card} ${styles.wide}`} style={{ animationDelay: "180ms" }}>
             <h3>How it looks</h3>
             <Previews a={a} context={context} />
@@ -171,18 +181,11 @@ export function HeadlineStudio() {
           </section>
         </div>
       ) : (
-        <p className={styles.empty}>Type a headline, or start from one of the formulas below.</p>
+        <>
+          <p className={styles.empty}>Type a headline, or start from one of the formulas below.</p>
+          <Formulas context={context} onPick={pickFormula} />
+        </>
       )}
-
-      <Formulas
-        context={context}
-        onPick={(example) => {
-          remember();
-          setText(example);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          input.current?.focus();
-        }}
-      />
 
       {history.length > 0 && (
         <section className={`${ui.panel} ${styles.history}`}>
@@ -212,11 +215,11 @@ export function HeadlineStudio() {
 }
 
 /** Proven patterns for the chosen format, each with a worked example and its live score. */
-function Formulas({ context, onPick }: { context: Context; onPick: (example: string) => void }) {
+function Formulas({ context, onPick, className = "" }: { context: Context; onPick: (example: string) => void; className?: string }) {
   return (
-    <section className={`${ui.panel} ${styles.formulas}`}>
+    <section className={`${ui.panel} ${styles.formulas} ${className}`}>
       <h2>Formulas that work</h2>
-      <p className={styles.formulaNote}>Patterns that consistently win clicks for {CONTEXTS.find((c) => c.id === context)!.label.toLowerCase()}s. Pick one and swap in your own details.</p>
+      <p className={styles.formulaNote}>Patterns that consistently win clicks for {FORMAT_NAME[context]}. Pick one and swap in your own details.</p>
       <ul key={context}>
         {FORMULAS[context].map((f, i) => {
           const score = analyze(f.example, context).score;
