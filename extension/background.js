@@ -7,8 +7,10 @@ const MENU = [
   { id: "link-preview", title: "Check this link's preview", contexts: ["link"], open: (info) => toolUrl("/preview", { url: info.linkUrl }) },
   { id: "link-qr", title: "QR code for this link", contexts: ["link"], open: (info) => toolUrl("/qr", { link: info.linkUrl }) },
   { id: "image-resize", title: "Resize this image for social", contexts: ["image"], open: (info) => toolUrl("/resize", { img: info.srcUrl }) },
+  { id: "image-gif", title: "Animate this image as a GIF", contexts: ["image"], open: (info) => toolUrl("/gif", { img: info.srcUrl }) },
   { id: "page-speed", title: "Speed audit this page", contexts: ["page"], open: (info) => toolUrl("/speed", { url: info.pageUrl }) },
   { id: "page-preview", title: "Check how this page looks when shared", contexts: ["page"], open: (info) => toolUrl("/preview", { url: info.pageUrl }) },
+  { id: "page-vibe", title: "Run a vibe code audit on this app", contexts: ["page"], open: (info) => toolUrl("/vibe", { url: info.pageUrl }) },
 ];
 
 chrome.runtime.onInstalled.addListener(() => {
