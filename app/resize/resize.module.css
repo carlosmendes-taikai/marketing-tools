@@ -134,21 +134,6 @@
   font-size: 13px;
 }
 
-.settings {
-  margin-left: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
-.bgRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: fadeUp 0.3s var(--ease);
-}
-
 /* size picker */
 .picker {
   display: flex;
@@ -233,18 +218,81 @@
 /* results */
 .bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
   padding: 6px 4px 0;
-  font-size: 15px;
-  color: var(--muted);
   animation: fadeUp 0.4s var(--ease);
 }
 
-.bar b {
-  color: var(--ink);
-  font-weight: 600;
+.barLeft,
+.barRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.barHint {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* options that belong to "Fit whole image": tinted and tucked under it */
+.subOptions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  align-self: flex-start;
+  margin: -2px 0 2px 18px;
+  padding: 10px 14px;
+  background: var(--accent-soft);
+  border-radius: 14px;
+  animation: fadeUp 0.3s var(--ease);
+}
+
+.subOptions::before {
+  content: "";
+  position: absolute;
+  left: 40px;
+  top: -8px;
+  border: 8px solid transparent;
+  border-top: 0;
+  border-bottom-color: var(--accent-soft);
+}
+
+.subLabel {
+  font-size: 13.5px;
+  color: var(--accent-ink);
+}
+
+.subSeg {
+  display: inline-flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 99px;
+  padding: 3px;
+}
+
+.subSeg button {
+  border: 0;
+  background: transparent;
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-size: 13.5px;
+  color: var(--accent-ink);
+  cursor: pointer;
+  transition:
+    background 0.25s var(--ease),
+    color 0.25s;
+}
+
+.subSeg button.subOn {
+  background: var(--accent);
+  color: #fff;
 }
 
 .bar button {
@@ -374,7 +422,7 @@
 }
 
 @media (max-width: 760px) {
-  .settings {
+  .subOptions {
     margin-left: 0;
   }
   .platform {

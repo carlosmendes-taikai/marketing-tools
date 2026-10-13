@@ -150,36 +150,6 @@ export function ResizeStudio() {
                 <input type="file" accept="image/*" hidden onChange={(e) => load(e.target.files?.[0])} />
               </label>
             </div>
-            <div className={styles.settings}>
-              <div className={ui.segment}>
-                <button className={mode === "crop" ? ui.on : ""} onClick={() => setMode("crop")}>
-                  Fill and crop
-                </button>
-                <button className={mode === "fit" ? ui.on : ""} onClick={() => setMode("fit")}>
-                  Fit whole image
-                </button>
-              </div>
-              {mode === "fit" && (
-                <div className={styles.bgRow}>
-                  <div className={ui.segment}>
-                    <button className={bg === "blur" ? ui.on : ""} onClick={() => setBg("blur")}>
-                      Blurred edges
-                    </button>
-                    <button className={bg === "color" ? ui.on : ""} onClick={() => setBg("color")}>
-                      Solid colour
-                    </button>
-                  </div>
-                  {bg === "color" && <ColorPicker label="Background" value={bgColor} onChange={setBgColor} />}
-                </div>
-              )}
-              <div className={ui.segment}>
-                {(["jpg", "png", "webp"] as const).map((f) => (
-                  <button key={f} className={format === f ? ui.on : ""} onClick={() => setFormat(f)}>
-                    {f.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         )}
         {error && <p className={styles.error}>{error}</p>}
@@ -221,13 +191,44 @@ export function ResizeStudio() {
       {src && sizes.length > 0 && (
         <>
           <div className={styles.bar}>
-            <span>
-              <b>{sizes.length}</b> size{sizes.length === 1 ? "" : "s"} · drag any image to reframe it
-            </span>
-            <button className={ui.primary} disabled={!!busy} onClick={downloadAll}>
-              {busy === "all" ? "Making zip…" : `Download all (${sizes.length})`}
-            </button>
+            <div className={styles.barLeft}>
+              <div className={ui.segment}>
+                <button className={mode === "crop" ? ui.on : ""} onClick={() => setMode("crop")}>
+                  Fill and crop
+                </button>
+                <button className={mode === "fit" ? ui.on : ""} onClick={() => setMode("fit")}>
+                  Fit whole image
+                </button>
+              </div>
+              <span className={styles.barHint}>{mode === "crop" ? "Drag any image to reframe it" : "Nothing gets cut off"}</span>
+            </div>
+            <div className={styles.barRight}>
+              <div className={ui.segment}>
+                {(["jpg", "png", "webp"] as const).map((f) => (
+                  <button key={f} className={format === f ? ui.on : ""} onClick={() => setFormat(f)}>
+                    {f.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              <button className={ui.primary} disabled={!!busy} onClick={downloadAll}>
+                {busy === "all" ? "Making zip…" : `Download all (${sizes.length})`}
+              </button>
+            </div>
           </div>
+          {mode === "fit" && (
+            <div className={styles.subOptions}>
+              <span className={styles.subLabel}>Fill the empty space with</span>
+              <div className={styles.subSeg}>
+                <button className={bg === "blur" ? styles.subOn : ""} onClick={() => setBg("blur")}>
+                  Blurred edges
+                </button>
+                <button className={bg === "color" ? styles.subOn : ""} onClick={() => setBg("color")}>
+                  Solid colour
+                </button>
+              </div>
+              {bg === "color" && <ColorPicker label="Background" value={bgColor} onChange={setBgColor} />}
+            </div>
+          )}
           <div className={styles.grid}>
             {sizes.map((s, i) => (
               <Card
