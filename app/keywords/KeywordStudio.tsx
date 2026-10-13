@@ -8,7 +8,9 @@ import styles from "./keywords.module.css";
 type GroupState = { status: "loading" | "done" | "error"; ideas: Idea[]; error?: string };
 type Sort = "google" | "popular";
 const HISTORY_KEY = "keywords-history-v1";
-const PREVIEW = 30;
+// each list starts short and grows in steps, so the page stays scannable
+const FIRST = 10;
+const STEP = 20;
 const EXAMPLES = ["email signature", "coffee shop", "running shoes", "crm software"];
 
 export function KeywordStudio() {
@@ -19,7 +21,7 @@ export function KeywordStudio() {
   const [groups, setGroups] = useState<Partial<Record<GroupId, GroupState>>>({});
   const [filter, setFilter] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [expanded, setExpanded] = useState<Set<GroupId>>(new Set());
+  const [shown, setShown] = useState<Partial<Record<GroupId, number>>>({});
   const [history, setHistory] = useState<string[]>([]);
   const [copied, setCopied] = useState("");
   const [sort, setSort] = useState<Sort>("google");
@@ -51,7 +53,7 @@ export function KeywordStudio() {
     setSeed(q);
     setFilter("");
     setSelected(new Set());
-    setExpanded(new Set());
+    setShown({});
     setGroups(Object.fromEntries(GROUPS.map((g) => [g.id, { status: "loading", ideas: [] }])));
     window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -249,8 +251,9 @@ export function KeywordStudio() {
               const state = groups[g.id];
               const texts = (state?.ideas ?? []).map((i) => i.t).filter((t) => !f || t.includes(f));
               const ideas = sort === "popular" ? [...texts].sort((a, b) => (scores.get(b) ?? 1) - (scores.get(a) ?? 1)) : texts;
-              const open = expanded.has(g.id);
-              const visible = open ? ideas : ideas.slice(0, PREVIEW);
+              const limit = shown[g.id] ?? FIRST;
+              const visible = ideas.slice(0, limit);
+              const left = ideas.length - visible.length;
               return (
                 <section key={g.id} className={styles.group} style={{ animationDelay: `${gi * 60}ms` }}>
                   <header>
@@ -281,19 +284,16 @@ export function KeywordStudio() {
                       </li>
                     ))}
                   </ul>
-                  {ideas.length > PREVIEW && (
+                  {ideas.length > FIRST && (
                     <button
                       className={styles.more}
-                      onClick={() =>
-                        setExpanded((s) => {
-                          const n = new Set(s);
-                          if (open) n.delete(g.id);
-                          else n.add(g.id);
-                          return n;
-                        })
-                      }
+                      aria-expanded={!left}
+                      onClick={() => setShown((m) => ({ ...m, [g.id]: left ? limit + STEP : FIRST }))}
                     >
-                      {open ? "Show less" : `Show all ${ideas.length}`}
+                      {left ? `See ${Math.min(left, STEP)} more` : "Show less"}
+                      <svg className={left ? "" : styles.flip} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
                     </button>
                   )}
                 </section>

@@ -77,18 +77,25 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className={styles.layout}>
         <article className={styles.article}>
+          {/* The header is drawn like the cover image, so the title appears once. The image itself is the share image and blog card thumbnail. */}
           <header className={styles.header}>
             <Link href="/blog" className={styles.back}>
               ← All guides
             </Link>
-            <h1>{post.title}</h1>
-            <p className={styles.lead}>{post.description}</p>
+            <div className={styles.hero}>
+              <h1>{post.title}</h1>
+              <p className={styles.heroSub}>{post.subtitle}</p>
+              <div className={styles.heroMark} aria-hidden>
+                <i />
+                <i />
+                <i />
+                <i />
+              </div>
+            </div>
             <p className={styles.meta}>
               {AUTHOR} · {formatDate(post.date)} · {post.minutes} min read
             </p>
           </header>
-          {/* eslint-disable-next-line @next/next/no-img-element -- already a sized PNG from our own route */}
-          <img className={styles.cover} src={post.cover} alt={post.coverAlt} width={1200} height={630} fetchPriority="high" />
           <div className={styles.prose} dangerouslySetInnerHTML={{ __html: before }} />
           {tool && after && <ToolCta slug={tool.slug} />}
           {after && <div className={styles.prose} dangerouslySetInnerHTML={{ __html: after }} />}

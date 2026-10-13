@@ -117,6 +117,53 @@
   animation: rise 0.6s 0.08s var(--ease) both;
 }
 
+/* article header, drawn like the cover image */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 52px 48px 56px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.hero h1 {
+  position: relative;
+  max-width: calc(100% - 120px);
+}
+
+.heroSub {
+  position: relative;
+  max-width: calc(100% - 140px);
+  margin-top: 16px;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #5f5d57;
+}
+
+.heroMark {
+  position: absolute;
+  right: -22px;
+  bottom: -22px;
+  display: grid;
+  grid-template-columns: repeat(2, 72px);
+  gap: 10px;
+}
+
+.heroMark i {
+  height: 72px;
+  border-radius: 19px;
+  background: var(--line);
+}
+
+.heroMark i:nth-child(2) {
+  background: var(--accent);
+}
+
+.heroMark i:nth-child(4) {
+  background: var(--accent-soft);
+}
+
 .back {
   display: inline-block;
   font-size: 14px;
@@ -328,6 +375,28 @@
 @media (max-width: 640px) {
   .header h1 {
     font-size: 34px;
+  }
+  .hero {
+    padding: 30px 24px 64px;
+  }
+  .hero h1 {
+    max-width: none;
+  }
+  .heroSub {
+    max-width: calc(100% - 100px);
+  }
+  .heroSub {
+    font-size: 17px;
+  }
+  .heroMark {
+    grid-template-columns: repeat(2, 56px);
+    gap: 8px;
+    right: -16px;
+    bottom: -16px;
+  }
+  .heroMark i {
+    height: 56px;
+    border-radius: 15px;
   }
   .lead {
     font-size: 18px;

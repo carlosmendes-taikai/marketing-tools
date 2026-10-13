@@ -312,6 +312,9 @@
 }
 
 .more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin: 6px 10px 2px;
   border: 0;
   background: transparent;
@@ -319,6 +322,19 @@
   font-weight: 500;
   color: var(--accent-ink);
   cursor: pointer;
+}
+
+.more svg {
+  transition: transform 0.3s var(--spring);
+}
+
+.more:hover svg {
+  transform: translateY(2px);
+}
+
+.more .flip,
+.more:hover .flip {
+  transform: rotate(180deg);
 }
 
 .empty {
