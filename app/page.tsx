@@ -15,7 +15,9 @@ export default function Home() {
             </span>
           </span>
         </h1>
-        <p className={styles.sub}>No paywall at the end.</p>
+        <p className={styles.sub}>
+          Tools for marketers, founders and creators. <span>Free to use, free to download, no account.</span>
+        </p>
       </section>
       <Bento />
     </main>

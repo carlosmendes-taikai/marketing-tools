@@ -48,11 +48,16 @@
   }
 }
 
+.sub span {
+  display: block; /* one sentence per line on wide screens */
+}
+
 .sub {
-  margin-top: 14px;
-  font-size: 32px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
+  margin-top: 18px;
+  font-size: 22px;
+  line-height: 1.4;
+  font-weight: 450;
+  letter-spacing: -0.02em;
   color: var(--muted);
   opacity: 0;
   transform: translateY(10px);
@@ -64,7 +69,10 @@
     padding-top: 40px;
   }
   .sub {
-    font-size: 22px;
+    font-size: 18px;
+  }
+  .sub span {
+    display: inline;
   }
   .title {
     font-size: 54px;
