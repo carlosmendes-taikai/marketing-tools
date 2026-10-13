@@ -1,0 +1,199 @@
+.root {
+  position: relative;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.trigger:hover,
+.trigger.open {
+  background: var(--soft);
+}
+
+.chev {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.35s var(--spring);
+}
+
+.open .chev {
+  transform: translateY(1px) rotate(-135deg);
+}
+
+.panel {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(820px, calc(100vw - 56px));
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+  background: var(--tile);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 0 30px 60px -28px rgba(20, 20, 19, 0.35);
+  transform-origin: top right;
+  animation: open 0.32s var(--spring);
+}
+
+/* invisible bridge so the mouse can travel from the button to the panel */
+.panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 12px;
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.list li {
+  opacity: 0;
+  animation: item 0.35s var(--ease) forwards;
+}
+
+@keyframes item {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.list a {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.list a b {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.list a small {
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.list a.on {
+  background: var(--soft);
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.demo {
+  flex: 1;
+  min-height: 300px;
+  animation: swap 0.35s var(--ease);
+}
+
+@keyframes swap {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+.caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 2px 6px 4px;
+}
+
+.caption b {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.caption small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.go {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #fff;
+  transition: transform 0.3s var(--spring);
+}
+
+.preview:hover .go {
+  transform: translateX(3px);
+}
+
+/* phones: a simple full-width list, no demo */
+@media (max-width: 760px) {
+  .panel {
+    position: fixed;
+    top: 70px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    grid-template-columns: 1fr;
+    transform-origin: top center;
+  }
+  .preview {
+    display: none;
+  }
+  .list {
+    max-height: calc(100vh - 110px);
+  }
+  .list a small {
+    -webkit-line-clamp: 2;
+  }
+}

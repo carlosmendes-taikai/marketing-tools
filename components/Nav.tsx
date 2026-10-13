@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/site";
+import { ToolsMenu } from "./ToolsMenu";
 import styles from "./chrome.module.css";
 
 export function Nav() {
@@ -16,7 +17,7 @@ export function Nav() {
           {SITE_NAME}
         </Link>
         <div className={styles.links}>
-          <Link href="/#tools">Tools</Link>
+          <ToolsMenu />
         </div>
       </div>
     </nav>
