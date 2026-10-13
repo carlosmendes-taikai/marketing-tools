@@ -10,9 +10,10 @@ Small tools that each do one job well. No account, no paywall, nothing to upgrad
 | Page speed audit | `/speed` | Live |
 | UTM builder | `/utm` | Live |
 | Link preview | `/preview` | Live |
+| LinkedIn post formatter | `/linkedin` | Live |
 
 
-More on the way: LinkedIn previewer, image resizer, headline analyzer.
+More on the way: image resizer, headline analyzer.
 
 ## Run it locally
 
