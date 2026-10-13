@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SITE_NAME, AUTHOR, GITHUB_URL } from "@/lib/site";
 import styles from "./chrome.module.css";
 
@@ -9,9 +10,12 @@ export function Footer() {
         <span>
           {SITE_NAME} · built by {AUTHOR}
         </span>
-        <a href={GITHUB_URL} target="_blank" rel="noreferrer">
-          Open source on GitHub
-        </a>
+        <span className={styles.footerLinks}>
+          <Link href="/privacy">Privacy</Link>
+          <a href={GITHUB_URL} target="_blank" rel="noreferrer">
+            Open source on GitHub
+          </a>
+        </span>
         </div>
       </div>
     </footer>
