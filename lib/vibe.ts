@@ -61,14 +61,16 @@ async function getText(url: string, cap: number, accept = "*/*") {
 
 /* ---------- platform detection ---------- */
 
+// Specific fingerprints only (the platforms' own domains and default tags), never just the name,
+// so a page that merely mentions "Lovable" isn't mistaken for a Lovable app.
 const PLATFORMS: { id: string; name: string; test: (host: string, html: string, js: string) => boolean }[] = [
-  { id: "lovable", name: "Lovable", test: (h, html, js) => h.endsWith(".lovable.app") || /lovable|gpteng\.co|gptengineer/i.test(html) || /lovable-tagger|lovable\.dev/i.test(js) },
-  { id: "base44", name: "Base44", test: (h, html, js) => h.endsWith(".base44.app") || /base44/i.test(html) || /@base44\/sdk|base44\.app/i.test(js) },
-  { id: "bolt", name: "Bolt", test: (h, html) => h.endsWith(".bolt.host") || /bolt\.new/i.test(html) },
-  { id: "v0", name: "v0", test: (h, html) => /generator" content="v0/i.test(html) || h.endsWith(".v0.app") },
-  { id: "replit", name: "Replit", test: (h, html) => h.endsWith(".replit.app") || h.endsWith(".repl.co") || /replit/i.test(html) },
-  { id: "emergent", name: "Emergent", test: (h, html) => h.endsWith(".emergent.host") || /emergent\.sh|emergentagent/i.test(html) },
-  { id: "anything", name: "Anything", test: (h, html) => h.endsWith(".created.app") || /createanything|anything\.com/i.test(html) },
+  { id: "lovable", name: "Lovable", test: (h, html, js) => h.endsWith(".lovable.app") || /gpteng\.co|gptengineer|content="@lovable"|lovable\.dev\/opengraph/i.test(html) || /lovable\.dev|lovableproject|gptengineer|lovable-tagger|lovable-preview-auth/.test(js) },
+  { id: "base44", name: "Base44", test: (h, html, js) => h.endsWith(".base44.app") || /base44\.app|@base44\//i.test(html) || /@base44\/sdk|base44\.app/.test(js) },
+  { id: "bolt", name: "Bolt", test: (h, html) => h.endsWith(".bolt.host") || /bolt\.new\//i.test(html) },
+  { id: "v0", name: "v0", test: (h, html) => /name="generator" content="v0/i.test(html) || h.endsWith(".v0.app") },
+  { id: "replit", name: "Replit", test: (h, html) => h.endsWith(".replit.app") || h.endsWith(".repl.co") || /replit\.(com|app)\/|repl\.co\//i.test(html) },
+  { id: "emergent", name: "Emergent", test: (h, html) => h.endsWith(".emergent.host") || /emergent\.sh\/|emergentagent\.com/i.test(html) },
+  { id: "anything", name: "Anything", test: (h, html) => h.endsWith(".created.app") || /createanything\.com/i.test(html) },
 ];
 
 const DEFAULT_TITLES = /^(vite \+ react( \+ ts)?|react app|lovable( app)?|lovable generated project|my (google )?ai studio app|base44 app|bolt|untitled|new project)$/i;
@@ -229,6 +231,18 @@ export async function auditApp(input: string): Promise<VibeReport> {
         }
       : { id: "og-image", category: "seo", status: "pass", impact: "medium", title: "Has its own share image", detail: "Links to it will show a picture when shared." },
   );
+
+  const twitterSite = meta(html, "twitter:site");
+  if (/^@(lovable|base44|boltdotnew|replit)$/i.test(twitterSite))
+    add({
+      id: "twitter-site",
+      category: "seo",
+      status: "warn",
+      impact: "low",
+      title: `Your X share tag still credits ${twitterSite}`,
+      detail: "When your link is shared on X, it's attributed to the platform's account instead of yours.",
+      fix: "Change the twitter:site tag to your own X handle, or remove it.",
+    });
 
   const lang = html.match(/<html\b[^>]*\blang\s*=\s*["']([^"']+)/i)?.[1];
   if (!lang) add({ id: "lang", category: "seo", status: "warn", impact: "low", title: "The page doesn't say what language it's in", detail: "Search engines and screen readers use the lang attribute.", fix: 'Add lang="en" (or your language) to the <html> tag.' });
