@@ -12,8 +12,8 @@ export const metadata: Metadata = pageMetadata(
   "/blog",
 );
 
-export default function BlogPage() {
-  const posts = getPosts();
+export default async function BlogPage() {
+  const posts = await getPosts();
   const groups = TOOLS.filter((t) => t.live)
     .map((t) => ({ tool: t, posts: posts.filter((p) => p.tool === t.slug) }))
     .filter((g) => g.posts.length);

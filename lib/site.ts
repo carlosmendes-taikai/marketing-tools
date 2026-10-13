@@ -22,3 +22,6 @@ export const TOOLS: Tool[] = [
   { slug: "resize", name: "Image resizer", blurb: "One image, every social size, one zip.", live: true },
   { slug: "headline", name: "Headline analyzer", blurb: "Score your hook before you hit post.", live: true },
 ];
+
+/** A tool name mid-sentence: "the email signature", but "the UTM builder" and "the LinkedIn post formatter". */
+export const nameInSentence = (name: string) => (/^[A-Z][a-z]+\b/.test(name) ? name[0].toLowerCase() + name.slice(1) : name);

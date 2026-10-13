@@ -3,7 +3,7 @@ import { SITE_URL } from "@/lib/og";
 import { TOOLS } from "@/lib/site";
 import { getPosts } from "@/lib/blog";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   return [
     { url: SITE_URL, lastModified: now, changeFrequency: "weekly", priority: 1 },
@@ -14,9 +14,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     })),
     { url: `${SITE_URL}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    ...getPosts().map((p) => ({
+    ...(await getPosts()).map((p) => ({
       url: `${SITE_URL}/blog/${p.slug}`,
-      lastModified: new Date(`${p.date}T12:00:00Z`),
+      lastModified: new Date(p.updated),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),

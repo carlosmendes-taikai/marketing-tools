@@ -1,30 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { formatDate, getPost, getPosts, TOOL_MARKER } from "@/lib/blog";
+import { notFound, permanentRedirect } from "next/navigation";
+import { formatDate, getPost, getPosts, getRedirect, TOOL_MARKER } from "@/lib/blog";
 import { pageMetadata, SITE_URL } from "@/lib/og";
 import { SITE_NAME, AUTHOR, TOOLS } from "@/lib/site";
 import { ToolCta } from "@/components/ToolCta";
 import { RelatedGuides } from "@/components/RelatedGuides";
 import styles from "../blog.module.css";
 
-// every post is prerendered from generateStaticParams; unknown slugs 404
+// Published posts are prerendered. A post added or renamed in /admin renders on its first visit;
+// an old slug redirects to the new one, anything else 404s.
 export const instant = false;
 
-export function generateStaticParams() {
-  return getPosts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await getPosts()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const post = getPost((await params).slug);
+  const post = await getPost((await params).slug);
   if (!post) return {};
   const base = pageMetadata(post.title, post.description, `/blog/${post.slug}`);
   return { ...base, openGraph: { ...base.openGraph, type: "article", publishedTime: post.date, authors: [AUTHOR] } };
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const post = getPost((await params).slug);
-  if (!post) notFound();
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) {
+    const moved = await getRedirect(slug);
+    if (moved) permanentRedirect(`/blog/${moved}`);
+    notFound();
+  }
   const tool = TOOLS.find((t) => t.slug === post.tool);
   const [before, after] = post.html.includes(TOOL_MARKER) ? post.html.split(TOOL_MARKER) : [post.html, ""];
   const url = `${SITE_URL}/blog/${post.slug}`;
@@ -36,7 +42,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       headline: post.title,
       description: post.description,
       datePublished: post.date,
-      dateModified: post.date,
+      dateModified: post.updated.slice(0, 10),
       image: `${url}/opengraph-image`,
       mainEntityOfPage: url,
       author: { "@type": "Person", name: AUTHOR, url: "https://mendes.cc" },
