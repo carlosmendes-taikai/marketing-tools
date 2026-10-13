@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // the Chrome extension is plain browser JS with a vendored library
+    "extension/**",
   ]),
 ]);
 

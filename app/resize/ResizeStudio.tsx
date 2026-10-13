@@ -44,6 +44,17 @@ export function ResizeStudio() {
     [src],
   );
 
+  // The browser extension hands over an image address: ?img=https://...
+  // It loads straight in when the image's site allows it (most CDNs do); otherwise we explain the fallback.
+  useEffect(() => {
+    const img = new URLSearchParams(window.location.search).get("img");
+    if (!img) return;
+    fetch(img, { mode: "cors" })
+      .then((res) => (res.ok ? res.blob() : Promise.reject()))
+      .then((blob) => load(new File([blob], decodeURIComponent(new URL(img).pathname.split("/").pop() || "image"), { type: blob.type })))
+      .catch(() => setError("That website doesn't let other sites open its images. Right-click the image, save it, then drop it here."));
+  }, []);
+
   function load(file: File | undefined) {
     if (!file) return;
     if (!file.type.startsWith("image/")) return setError("That isn't an image. Try a JPG, PNG or WebP.");

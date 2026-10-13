@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>mktbox</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="logo" data-open="/" title="Open mktbox.xyz">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="3" y="3" width="12" height="12" rx="3.5" fill="#141413" />
+          <rect x="17" y="3" width="12" height="12" rx="3.5" fill="#6c70e0" />
+          <rect x="3" y="17" width="12" height="12" rx="3.5" fill="#141413" />
+          <rect x="17" y="17" width="12" height="12" rx="3.5" fill="#141413" />
+        </svg>
+        mktbox
+      </a>
+      <a class="all" data-open="/">All tools ↗</a>
+    </header>
+
+    <section class="page" id="page">
+      <b id="page-title">This page</b>
+      <span id="page-host"></span>
+    </section>
+
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="qr">QR code</button>
+      <button role="tab" data-tab="utm">UTM link</button>
+      <button role="tab" data-tab="check">Check</button>
+    </nav>
+
+    <p class="blocked" id="blocked" hidden>Open a normal web page to use these tools. This one can't be shared or tagged.</p>
+
+    <!-- QR code -->
+    <section class="panel" data-panel="qr">
+      <div class="qr-box"><div id="qr"></div></div>
+      <p class="qr-for" id="qr-for"></p>
+      <div class="row">
+        <button class="primary" id="qr-download">Download PNG</button>
+        <button class="ghost" id="qr-customize">Customize ↗</button>
+      </div>
+    </section>
+
+    <!-- UTM link -->
+    <section class="panel" data-panel="utm" hidden>
+      <label class="label">Where are you sharing it?</label>
+      <div class="chips" id="channels"></div>
+      <label class="label" for="campaign">Campaign name</label>
+      <input id="campaign" placeholder="spring_launch" autocomplete="off" spellcheck="false" />
+      <div class="result" id="utm-result">Pick a channel to build the link.</div>
+      <div class="row">
+        <button class="primary" id="utm-copy" disabled>Copy link</button>
+        <button class="ghost" id="utm-qr" disabled>QR code</button>
+      </div>
+      <a class="more" id="utm-more">More options in the UTM builder ↗</a>
+    </section>
+
+    <!-- checks -->
+    <section class="panel" data-panel="check" hidden>
+      <button class="tool" data-tool="preview">
+        <b>Link preview</b>
+        <span>How this page looks when shared on LinkedIn, X and WhatsApp</span>
+      </button>
+      <button class="tool" data-tool="speed">
+        <b>Speed audit</b>
+        <span>What's slowing this page down, in plain English</span>
+      </button>
+      <button class="tool" data-tool="headline">
+        <b>Headline score</b>
+        <span>How strong this page's title is for Google</span>
+      </button>
+    </section>
+
+    <script src="shared.js"></script>
+    <script src="vendor/qr-code-styling.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
