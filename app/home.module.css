@@ -48,10 +48,6 @@
   }
 }
 
-.sub span {
-  display: block; /* one sentence per line on wide screens */
-}
-
 .sub {
   margin-top: 18px;
   font-size: 22px;
@@ -71,9 +67,7 @@
   .sub {
     font-size: 18px;
   }
-  .sub span {
-    display: inline;
-  }
+
   .title {
     font-size: 54px;
   }

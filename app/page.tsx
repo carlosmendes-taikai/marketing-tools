@@ -15,9 +15,7 @@ export default function Home() {
             </span>
           </span>
         </h1>
-        <p className={styles.sub}>
-          Tools for marketers, founders and creators. <span>Free to use, free to download, no account.</span>
-        </p>
+        <p className={styles.sub}>Tools for marketers, founders and creators. Free to use and download, no account required.</p>
       </section>
       <Bento />
     </main>
