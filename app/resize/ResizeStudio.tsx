@@ -51,7 +51,7 @@ export function ResizeStudio() {
     if (!img) return;
     fetch(img, { mode: "cors" })
       .then((res) => (res.ok ? res.blob() : Promise.reject()))
-      .then((blob) => load(new File([blob], decodeURIComponent(new URL(img).pathname.split("/").pop() || "image"), { type: blob.type })))
+      .then((blob) => load(new File([blob], decodeURIComponent(new URL(img, location.href).pathname.split("/").pop() || "image"), { type: blob.type })))
       .catch(() => setError("That website doesn't let other sites open its images. Right-click the image, save it, then drop it here."));
   }, []);
 
