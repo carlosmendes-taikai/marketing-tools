@@ -102,9 +102,25 @@
   font-size: 15px;
 }
 
-.tile:hover .go {
-  transform: none;
-  opacity: 1;
+/* the arrow only appears on hover with a real mouse; on phones a tap or scroll counts as
+   hover and left it sitting on top of the text */
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover .go {
+    transform: none;
+    opacity: 1;
+  }
+
+  /* keep the last line of text clear of it */
+  .tile h3,
+  .tile p {
+    padding-right: 44px;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .go {
+    display: none;
+  }
 }
 
 .soon {
