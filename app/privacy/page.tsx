@@ -25,7 +25,7 @@ export default function PrivacyPage() {
           </p>
           <p>Some tools run entirely in your browser and send nothing to us:</p>
           <ul>
-            <li>QR code generator, image resizer, headline analyzer and LinkedIn post formatter.</li>
+            <li>QR code generator, image resizer, GIF animator, headline analyzer and LinkedIn post formatter.</li>
             <li>Links you save in the UTM builder, and your recent searches, are stored only in your own browser.</li>
           </ul>
           <p>Other tools need to send what you type to work:</p>
@@ -38,6 +38,9 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong>Keyword ideas</strong> sends your search term to Google and YouTube autocomplete.
+            </li>
+            <li>
+              <strong>Vibe code audit</strong> reads the public page, code files and a few standard files of the app you enter, from our server. It never logs in or reads its database.
             </li>
             <li>
               <strong>Email signature</strong> uploads images you add to file storage, so they can show in emails. Anyone with the link can see them.
