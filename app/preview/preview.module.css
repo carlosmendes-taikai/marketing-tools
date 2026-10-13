@@ -295,8 +295,21 @@
   background: linear-gradient(135deg, var(--accent), #b9bbf5);
 }
 
-.postText {
-  margin-bottom: 10px;
+.postLines {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 4px 0 14px;
+}
+
+.postLines i {
+  height: 8px;
+  border-radius: 4px;
+  background: #e8e8eb;
+}
+
+.postLines i:last-child {
+  width: 55%;
 }
 
 .wideImg {

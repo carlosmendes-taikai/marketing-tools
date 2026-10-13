@@ -203,7 +203,10 @@ function LinkedIn({ m }: { m: PageMeta }) {
   return (
     <div className={styles.li}>
       <Author name="You" />
-      <p className={styles.postText}>Worth a read 👇</p>
+      <div className={styles.postLines} aria-label="Your post text goes here">
+        <i />
+        <i />
+      </div>
       <div className={styles.liCard}>
         <Img m={m} className={styles.wideImg} />
         <div className={styles.liText}>
