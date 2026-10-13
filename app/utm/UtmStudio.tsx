@@ -43,6 +43,12 @@ export function UtmStudio() {
     } catch {}
   }, [library, loaded]);
 
+  // The browser extension and other tools can hand over a value: ?url=...
+  useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get("url");
+    if (value) queueMicrotask(() => setBase(value));
+  }, []);
+
   const url = buildUtm(base, fields, clean);
   const warnings = warningsFor(base, fields);
   const ready = !!url && !!fields.source.trim() && !!fields.medium.trim();

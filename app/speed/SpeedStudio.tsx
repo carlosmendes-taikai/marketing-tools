@@ -27,6 +27,16 @@ export function SpeedStudio() {
   const [running, setRunning] = useState(false);
   const run = useRef(0);
 
+  // The browser extension and other tools can hand over a value: ?url=...
+  useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get("url");
+    if (value) queueMicrotask(() => {
+      setInput(value);
+      audit(value);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
+  }, []);
+
   async function audit(url = input, s = strategy) {
     if (!url.trim()) return;
     const id = ++run.current;

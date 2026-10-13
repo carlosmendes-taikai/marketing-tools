@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Check, PageMeta } from "@/lib/preview";
 import ui from "@/components/tool.module.css";
 import styles from "./preview.module.css";
@@ -14,6 +14,16 @@ export function PreviewStudio() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // The browser extension and other tools can hand over a value: ?url=...
+  useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get("url");
+    if (value) queueMicrotask(() => {
+      setInput(value);
+      check(value);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
+  }, []);
 
   async function check(url = input) {
     if (!url.trim()) return;

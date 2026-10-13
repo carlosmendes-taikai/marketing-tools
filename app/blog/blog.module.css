@@ -60,6 +60,17 @@
   box-shadow: 0 24px 40px -28px rgba(20, 20, 19, 0.3);
 }
 
+.thumb {
+  display: block;
+  width: calc(100% + 16px);
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  margin: -8px -8px 6px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+}
+
 .card b {
   font-size: 18px;
   font-weight: 600;

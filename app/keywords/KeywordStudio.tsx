@@ -34,6 +34,13 @@ export function KeywordStudio() {
     queueMicrotask(() => setHistory(saved));
   }, []);
 
+  // The browser extension and other tools can hand over a value: ?q=...
+  useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get("q");
+    if (value) queueMicrotask(() => search(value));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
+  }, []);
+
   function search(raw: string, opts?: { market?: string; source?: Source }) {
     const q = normalize(raw);
     if (!q) return;

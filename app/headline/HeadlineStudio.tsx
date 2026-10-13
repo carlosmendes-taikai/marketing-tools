@@ -27,6 +27,12 @@ export function HeadlineStudio() {
     queueMicrotask(() => setHistory(saved));
   }, []);
 
+  // The browser extension and other tools can hand over a value: ?text=...
+  useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get("text");
+    if (value) queueMicrotask(() => setText(value.slice(0, 300)));
+  }, []);
+
   const a = useMemo(() => analyze(text, context, keyword), [text, context, keyword]);
   const has = a.text.length > 0;
 
