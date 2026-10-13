@@ -24,6 +24,9 @@
 
 .demo {
   height: 210px;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
 .text {

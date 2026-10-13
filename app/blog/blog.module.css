@@ -260,6 +260,7 @@
   background: var(--soft);
   padding: 2px 6px;
   border-radius: 6px;
+  overflow-wrap: anywhere; /* long URLs wrap instead of pushing the page sideways on phones */
 }
 
 .prose pre {
@@ -276,6 +277,7 @@
   background: none;
   padding: 0;
   font-size: inherit;
+  overflow-wrap: normal;
 }
 
 .prose blockquote {
