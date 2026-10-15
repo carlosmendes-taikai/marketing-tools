@@ -167,7 +167,7 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: var(--accent);
+  background: var(--accent-btn);
   color: #fff;
   transition: transform 0.3s var(--spring);
 }

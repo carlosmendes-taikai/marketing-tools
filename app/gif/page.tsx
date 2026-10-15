@@ -6,7 +6,7 @@ import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
   "Free GIF animator: animate a logo or banner",
-  "Turn a still logo or banner into a subtle animated GIF: shine, float, pulse, fade in, wipe, slow zoom or drop in. Transparent backgrounds, made in your browser. Free, no account.",
+  "Turn a logo or banner into a subtle animated GIF: shine, float, pulse, fade, wipe, zoom or drop in. Transparent backgrounds, made in your browser. Free.",
   "/gif",
 );
 

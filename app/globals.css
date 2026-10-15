@@ -2,13 +2,14 @@
   --bg: #f4f3ef;
   --tile: #ffffff;
   --ink: #141413;
-  --muted: #76746e;
+  --muted: #6b6964; /* 4.5:1 on paper and on the soft fills */
   --line: #e6e4de;
   --line-strong: #d3d0c8;
   --soft: #f0efea;
   --accent: #6c70e0;
   --accent-soft: #e8e8fb;
   --accent-ink: #4b4fc4;
+  --accent-btn: #5d61d4; /* buttons with white text: a shade deeper than the brand colour, for 4.5:1 */
   --warn: #b7791f;
   --warn-soft: #fbf1df;
 

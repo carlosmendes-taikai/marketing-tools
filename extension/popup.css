@@ -2,7 +2,7 @@
   --bg: #f4f3ef;
   --tile: #ffffff;
   --ink: #141413;
-  --muted: #76746e;
+  --muted: #6b6964;
   --line: #e6e4de;
   --line-strong: #d3d0c8;
   --soft: #f0efea;
@@ -320,7 +320,7 @@ h2 {
 }
 
 .primary {
-  background: var(--accent);
+  background: #5d61d4; /* a shade deeper than the brand colour so white text reads at 4.5:1 */
   color: #fff;
 }
 
@@ -344,7 +344,7 @@ h2 {
 }
 
 .primary:disabled:hover {
-  background: var(--accent);
+  background: #5d61d4;
 }
 
 .field {

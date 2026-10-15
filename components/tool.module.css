@@ -568,7 +568,7 @@
 
 .primary {
   flex: 1;
-  background: var(--accent);
+  background: var(--accent-btn);
   color: #fff;
   border: 0;
 }

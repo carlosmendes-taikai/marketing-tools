@@ -8,7 +8,8 @@ export const ogSize = { width: 1200, height: 630 };
 /** Title, description, canonical and share tags for a page, all kept in step. */
 export function pageMetadata(title: string, description: string, path: string): Metadata {
   return {
-    title,
+    // the layout adds " · mktbox"; skip it when the title alone is already near Google's ~60 characters
+    title: title.length + ` · ${SITE_NAME}`.length > 60 ? { absolute: title } : title,
     description,
     alternates: { canonical: path },
     openGraph: { title, description, url: path, siteName: SITE_NAME, type: "website" },

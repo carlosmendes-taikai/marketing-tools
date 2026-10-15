@@ -291,7 +291,7 @@
 }
 
 .subSeg button.subOn {
-  background: var(--accent);
+  background: var(--accent-btn);
   color: #fff;
 }
 
@@ -397,7 +397,7 @@
 }
 
 .dl:hover {
-  background: var(--accent);
+  background: var(--accent-btn);
   border-color: var(--accent);
   color: #fff;
   transform: translateY(-2px);

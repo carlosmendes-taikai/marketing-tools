@@ -1,0 +1,41 @@
+.lead {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 620px;
+  margin: -12px 0 28px;
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 820px;
+}
+
+.tools a {
+  padding: 9px 16px;
+  border-radius: 99px;
+  background: var(--tile);
+  border: 1px solid var(--line);
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.tools a:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 32px;
+  max-width: 360px;
+}
+
+.actions a {
+  flex: 1;
+  text-align: center;
+}

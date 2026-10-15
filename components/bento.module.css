@@ -58,13 +58,13 @@
   min-height: 0;
 }
 
-.tile h3 {
+.tile h2 {
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.03em;
 }
 
-.big h3 {
+.big h2 {
   font-size: 44px;
   letter-spacing: -0.045em;
 }
@@ -97,7 +97,7 @@
 }
 
 .dark .go {
-  background: var(--accent);
+  background: var(--accent-btn);
   color: #fff;
   font-size: 15px;
 }
@@ -111,7 +111,7 @@
   }
 
   /* keep the last line of text clear of it */
-  .tile h3,
+  .tile h2,
   .tile p {
     padding-right: 44px;
   }
@@ -546,7 +546,7 @@
   .qr {
     width: 190px;
   }
-  .big h3 {
+  .big h2 {
     font-size: 32px;
   }
 }

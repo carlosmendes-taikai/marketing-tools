@@ -6,7 +6,7 @@ import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
   "Free social media image resizer",
-  "Resize one image for Instagram, LinkedIn, X, Facebook, YouTube, TikTok and Pinterest at once. Drag to reframe each size, download all as a zip. Free, and your image never leaves your device.",
+  "Resize one image for Instagram, LinkedIn, X, Facebook, YouTube and TikTok at once, reframe each size and download a zip. Free, and nothing is uploaded.",
   "/resize",
 );
 

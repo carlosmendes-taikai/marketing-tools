@@ -6,7 +6,7 @@ import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
   "Free link preview checker for LinkedIn, X and WhatsApp",
-  "See how your link looks on LinkedIn, X, WhatsApp, Slack, Facebook and Google before you share it. Checks your share image and tags, and gives you fixed tags to paste. Free, no account.",
+  "See how your link looks on LinkedIn, X, WhatsApp, Slack and Facebook before you share it, and get the exact fixes for missing images and titles. Free.",
   "/preview",
 );
 

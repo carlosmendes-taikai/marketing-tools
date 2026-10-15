@@ -6,7 +6,7 @@ import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
   "Free vibe code audit for Lovable, Base44 and Bolt apps",
-  "Check your vibe coded app for SEO, security and speed problems: leaked API keys, missing security headers, empty pages Google can't read, and heavy JavaScript. Free, no account.",
+  "Check a Lovable, Base44 or Bolt app for leaked API keys, missing security headers, pages Google can't read and heavy JavaScript. Free, no account.",
   "/vibe",
 );
 

@@ -113,7 +113,7 @@
   align-items: center;
   gap: 7px;
   margin-left: 4px;
-  background: var(--accent);
+  background: var(--accent-btn);
   color: #fff;
   font-size: 14px;
   font-weight: 500;

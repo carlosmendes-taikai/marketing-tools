@@ -23,7 +23,7 @@
 }
 
 .primary {
-  background: var(--accent);
+  background: var(--accent-btn);
   color: #fff;
 }
 

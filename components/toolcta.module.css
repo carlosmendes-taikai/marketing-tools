@@ -62,7 +62,7 @@
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  background: var(--accent);
+  background: var(--accent-btn);
   padding: 10px 16px;
   border-radius: 99px;
   transition: background 0.2s;

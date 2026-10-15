@@ -6,7 +6,7 @@ import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
   "Free page speed audit in plain English",
-  "Check how fast your website loads on phones and desktop, see your SEO basics, and get a short list of what to fix first. Powered by Google Lighthouse. Free, no account.",
+  "Check how fast your website loads on phones and desktop, with SEO basics and a short list of what to fix first. Powered by Google Lighthouse. Free, no account.",
   "/speed",
 );
 

@@ -296,7 +296,7 @@ function Tile({ tool, index, dragging, onClickCapture }: { tool: Tool; index: nu
   const inner = (
     <>
       <div className={styles.stage}>{Demo && <Demo active={active || dragging} />}</div>
-      <h3>{tool.name}</h3>
+      <h2>{tool.name}</h2>
       {showBlurb && <p>{tool.blurb}</p>}
       <span className={styles.go} aria-hidden>
         {tool.live ? "→" : "Soon"}
