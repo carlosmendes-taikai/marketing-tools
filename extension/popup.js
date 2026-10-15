@@ -163,4 +163,9 @@ function renderUtm() {
   });
   $("utm-more").addEventListener("click", () => open("/utm", { url: state.url }));
   renderUtm();
+  // opened as a normal page (store screenshots, testing): ?view=qr|utm starts on that screen
+  if (!globalThis.chrome?.tabs?.query) {
+    const v = new URLSearchParams(location.search).get("view");
+    if (v === "qr" || v === "utm") show(v);
+  }
 })();
