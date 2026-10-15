@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE_NAME, AUTHOR, GITHUB_URL } from "@/lib/site";
+import { SITE_NAME, AUTHOR, GITHUB_URL, CHROME_URL } from "@/lib/site";
 import styles from "./chrome.module.css";
 
 export function Footer() {
@@ -11,6 +11,9 @@ export function Footer() {
           {SITE_NAME} · built by {AUTHOR}
         </span>
         <span className={styles.footerLinks}>
+          <a href={CHROME_URL} target="_blank" rel="noreferrer">
+            Chrome extension
+          </a>
           <Link href="/privacy">Privacy</Link>
           <a href={GITHUB_URL} target="_blank" rel="noreferrer">
             Open source on GitHub
