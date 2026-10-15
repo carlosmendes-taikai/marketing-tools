@@ -7,6 +7,7 @@
   </head>
   <body>
     <header class="top">
+      <button class="back" id="back" hidden aria-label="Back to all tools">&larr;</button>
       <a class="logo" data-open="/" title="Open mktbox.xyz">
         <svg viewBox="0 0 32 32" aria-hidden="true">
           <rect x="3" y="3" width="12" height="12" rx="3.5" fill="#141413" />
@@ -16,64 +17,94 @@
         </svg>
         mktbox
       </a>
-      <a class="all" data-open="/">All tools ↗</a>
+      <span class="page-host" id="page-host"></span>
     </header>
 
-    <section class="page" id="page">
-      <b id="page-title">This page</b>
-      <span id="page-host"></span>
+    <!-- home: every tool for this page, the QR code first -->
+    <section class="view" data-view="home">
+      <h1>What do you want to make?</h1>
+      <p class="blocked" id="blocked" hidden>Open a normal web page to use these tools. This one can't be shared or checked.</p>
+
+      <button class="qr-card" data-go="qr" id="qr-card">
+        <span class="qr-mini"><span id="qr-mini"></span></span>
+        <span class="qr-copy">
+          <b>QR code for this page</b>
+          <span>Styled, free, never expires. Download it or customize it.</span>
+          <em>Open &rarr;</em>
+        </span>
+      </button>
+
+      <div class="grid">
+        <button class="card" data-go="utm">
+          <i class="ic ic-utm" aria-hidden="true"></i>
+          <b>UTM link</b>
+          <span>Tag this page for a campaign</span>
+        </button>
+        <button class="card" data-tool="preview">
+          <i class="ic ic-preview" aria-hidden="true"></i>
+          <b>Link preview</b>
+          <span>How it looks on LinkedIn, X, WhatsApp</span>
+        </button>
+        <button class="card" data-tool="vibe">
+          <i class="ic ic-vibe" aria-hidden="true"></i>
+          <b>Vibe code audit</b>
+          <span>For Lovable, Base44 and Bolt apps</span>
+        </button>
+        <button class="card" data-tool="speed">
+          <i class="ic ic-speed" aria-hidden="true"></i>
+          <b>Speed audit</b>
+          <span>What's slowing this page down</span>
+        </button>
+        <button class="card wide" data-tool="headline">
+          <i class="ic ic-headline" aria-hidden="true"></i>
+          <b>Headline score</b>
+          <span>How strong this page's title is for Google</span>
+        </button>
+      </div>
+
+      <p class="hint">Tip: right-click any image to resize it for social or turn it into a GIF.</p>
+      <a class="browse" data-open="/">Browse all 11 tools &nearr;</a>
     </section>
 
-    <nav class="tabs" role="tablist">
-      <button role="tab" data-tab="qr">QR code</button>
-      <button role="tab" data-tab="utm">UTM link</button>
-      <button role="tab" data-tab="check">Check</button>
-    </nav>
-
-    <p class="blocked" id="blocked" hidden>Open a normal web page to use these tools. This one can't be shared or tagged.</p>
-
     <!-- QR code -->
-    <section class="panel" data-panel="qr">
+    <section class="view" data-view="qr" hidden>
       <div class="qr-box"><div id="qr"></div></div>
       <p class="qr-for" id="qr-for"></p>
       <div class="row">
         <button class="primary" id="qr-download">Download PNG</button>
-        <button class="ghost" id="qr-customize">Customize ↗</button>
+        <button class="ghost" id="qr-customize">Customize &nearr;</button>
       </div>
     </section>
 
     <!-- UTM link -->
-    <section class="panel" data-panel="utm" hidden>
-      <label class="label">Where are you sharing it?</label>
-      <div class="chips" id="channels"></div>
-      <label class="label" for="campaign">Campaign name</label>
-      <input id="campaign" placeholder="spring_launch" autocomplete="off" spellcheck="false" />
-      <div class="result" id="utm-result">Pick a channel to build the link.</div>
+    <section class="view" data-view="utm" hidden>
+      <h2>UTM link</h2>
+      <label class="field">
+        <span>Source <small>where it's shared</small></span>
+        <input id="utm-source" list="sources" placeholder="linkedin" autocomplete="off" spellcheck="false" />
+      </label>
+      <label class="field">
+        <span>Medium <small>the kind of channel</small></span>
+        <input id="utm-medium" list="mediums" placeholder="social" autocomplete="off" spellcheck="false" />
+      </label>
+      <label class="field">
+        <span>Campaign name</span>
+        <input id="utm-campaign" placeholder="spring_launch" autocomplete="off" spellcheck="false" />
+      </label>
+      <datalist id="sources">
+        <option value="linkedin"></option><option value="instagram"></option><option value="facebook"></option><option value="x"></option>
+        <option value="tiktok"></option><option value="youtube"></option><option value="newsletter"></option><option value="google"></option><option value="qr"></option>
+      </datalist>
+      <datalist id="mediums">
+        <option value="social"></option><option value="email"></option><option value="cpc"></option><option value="paid_social"></option>
+        <option value="video"></option><option value="referral"></option><option value="offline"></option>
+      </datalist>
+      <div class="result" id="utm-result">Fill in the source and medium to build the link.</div>
       <div class="row">
         <button class="primary" id="utm-copy" disabled>Copy link</button>
         <button class="ghost" id="utm-qr" disabled>QR code</button>
       </div>
-      <a class="more" id="utm-more">More options in the UTM builder ↗</a>
-    </section>
-
-    <!-- checks -->
-    <section class="panel" data-panel="check" hidden>
-      <button class="tool" data-tool="preview">
-        <b>Link preview</b>
-        <span>How this page looks when shared on LinkedIn, X and WhatsApp</span>
-      </button>
-      <button class="tool" data-tool="vibe">
-        <b>Vibe code audit</b>
-        <span>SEO, security and speed problems in apps built with Lovable, Base44 or Bolt</span>
-      </button>
-      <button class="tool" data-tool="speed">
-        <b>Speed audit</b>
-        <span>What's slowing this page down, in plain English</span>
-      </button>
-      <button class="tool" data-tool="headline">
-        <b>Headline score</b>
-        <span>How strong this page's title is for Google</span>
-      </button>
+      <a class="more" id="utm-more">More options in the UTM builder &nearr;</a>
     </section>
 
     <script src="shared.js"></script>

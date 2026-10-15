@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "mktbox: free marketing tools",
   "short_name": "mktbox",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "QR codes, UTM links, link previews, speed and vibe code audits, and GIFs for the page you're on. Free, no account.",
   "homepage_url": "https://mktbox.xyz",
   "action": {

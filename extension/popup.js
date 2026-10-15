@@ -1,17 +1,11 @@
-// The popup: QR code, UTM link and quick checks for the page you're on.
-// Uses the same channel values and QR style as the website, so links match the UTM builder.
+// The popup: a home screen with every tool for the page you're on (the QR code first),
+// plus two tools that work right inside it: QR code and UTM link. The rest open on mktbox.xyz with the page filled in.
 
-const CHANNELS = [
-  { id: "linkedin", label: "LinkedIn", source: "linkedin", medium: "social" },
-  { id: "instagram", label: "Instagram", source: "instagram", medium: "social" },
-  { id: "facebook", label: "Facebook", source: "facebook", medium: "social" },
-  { id: "x", label: "X", source: "x", medium: "social" },
-  { id: "tiktok", label: "TikTok", source: "tiktok", medium: "social" },
-  { id: "youtube", label: "YouTube", source: "youtube", medium: "video" },
-  { id: "newsletter", label: "Newsletter", source: "newsletter", medium: "email" },
-  { id: "google-ads", label: "Google Ads", source: "google", medium: "cpc" },
-  { id: "qr", label: "Printed QR", source: "qr", medium: "offline" },
-];
+// Usual medium for a known source, so the medium can be left empty (same values as the website's UTM builder)
+const MEDIUM_FOR = {
+  linkedin: "social", instagram: "social", facebook: "social", x: "social", tiktok: "social",
+  youtube: "video", newsletter: "email", google: "cpc", qr: "offline",
+};
 
 const $ = (id) => document.getElementById(id);
 const remember = (key, value) => {
@@ -21,13 +15,13 @@ const remember = (key, value) => {
 };
 const recall = (key) => {
   try {
-    return localStorage.getItem(key);
+    return localStorage.getItem(key) || "";
   } catch {
-    return null;
+    return "";
   }
 };
 
-const state = { url: "", title: "", channel: recall("channel"), campaign: recall("campaign") || "", qrFor: "" };
+const state = { url: "", title: "", qrFor: "" };
 
 /** The active tab. Opened as a normal page (for testing), ?url=&title= stand in for it. */
 async function currentPage() {
@@ -46,29 +40,29 @@ function open(path, params) {
   window.close();
 }
 
-/* ---------- tabs ---------- */
+/* ---------- views ---------- */
 
-function showTab(name) {
-  document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
-  document.querySelectorAll("[data-panel]").forEach((p) => (p.hidden = p.dataset.panel !== name));
-  remember("tab", name);
+function show(view) {
+  document.querySelectorAll("[data-view]").forEach((v) => (v.hidden = v.dataset.view !== view));
+  $("back").hidden = view === "home";
+  if (view === "utm") $("utm-source").focus();
 }
 
 /* ---------- QR ---------- */
 
-const qr = new QRCodeStyling({
-  width: 600,
-  height: 600,
+const QR_STYLE = {
   type: "canvas",
-  data: " ",
   margin: 0,
   qrOptions: { errorCorrectionLevel: "M" },
   dotsOptions: { type: "rounded", color: "#2b2d6e" },
   cornersSquareOptions: { type: "extra-rounded", color: "#6c70e0" },
   cornersDotOptions: { type: "dot", color: "#6c70e0" },
   backgroundOptions: { color: "#ffffff" },
-});
+};
+const qr = new QRCodeStyling({ ...QR_STYLE, width: 600, height: 600, data: " " });
+const qrMini = new QRCodeStyling({ ...QR_STYLE, width: 240, height: 240, data: " " });
 qr.append($("qr"));
+qrMini.append($("qr-mini"));
 
 function setQr(data) {
   state.qrFor = data;
@@ -79,27 +73,33 @@ function setQr(data) {
 /* ---------- UTM ---------- */
 
 const clean = (s) => s.trim().toLowerCase().replace(/\s+/g, "_");
+const fields = () => {
+  const source = clean($("utm-source").value);
+  const medium = clean($("utm-medium").value) || MEDIUM_FOR[source] || "";
+  return { source, medium, campaign: clean($("utm-campaign").value) };
+};
 
 function tagged() {
-  const channel = CHANNELS.find((c) => c.id === state.channel);
-  if (!channel) return "";
+  const { source, medium, campaign } = fields();
+  if (!source || !medium) return "";
   const url = new URL(state.url);
   for (const key of [...url.searchParams.keys()]) if (key.startsWith("utm_")) url.searchParams.delete(key);
-  url.searchParams.set("utm_source", channel.source);
-  url.searchParams.set("utm_medium", channel.medium);
-  if (clean(state.campaign)) url.searchParams.set("utm_campaign", clean(state.campaign));
+  url.searchParams.set("utm_source", source);
+  url.searchParams.set("utm_medium", medium);
+  if (campaign) url.searchParams.set("utm_campaign", campaign);
   return url.toString();
 }
 
 function renderUtm() {
-  document.querySelectorAll("#channels button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.id === state.channel)));
+  const source = clean($("utm-source").value);
+  $("utm-medium").placeholder = MEDIUM_FOR[source] || "social";
   const link = tagged();
   const box = $("utm-result");
   box.classList.toggle("ready", !!link);
   if (link) {
     const [base, query] = link.split("?");
     box.replaceChildren(base + "?", Object.assign(document.createElement("mark"), { textContent: query }));
-  } else box.textContent = "Pick a channel to build the link.";
+  } else box.textContent = "Fill in the source and medium to build the link.";
   $("utm-copy").disabled = !link;
   $("utm-qr").disabled = !link;
 }
@@ -112,56 +112,25 @@ function renderUtm() {
   state.title = page.title;
   const web = isWebPage(page.url);
 
-  $("page-title").textContent = page.title || (web ? new URL(page.url).hostname : "This page");
-  $("page-host").textContent = web ? page.url.replace(/^https?:\/\//, "").replace(/\/$/, "") : "Not a web page";
-
+  $("page-host").textContent = web ? new URL(page.url).hostname.replace(/^www\./, "") : "";
   document.querySelectorAll("[data-open]").forEach((a) => a.addEventListener("click", () => open(a.dataset.open)));
-  document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
+  $("back").addEventListener("click", () => show("home"));
+  show("home");
 
   if (!web) {
     $("blocked").hidden = false;
-    document.querySelector(".tabs").hidden = true;
-    document.querySelectorAll("[data-panel]").forEach((p) => (p.hidden = true));
+    document.querySelectorAll(".qr-card, .card").forEach((c) => (c.disabled = true));
     return;
   }
 
-  showTab(recall("tab") || "qr");
   setQr(page.url);
-
-  $("qr-download").addEventListener("click", () => {
-    const name = `qr-${new URL(state.qrFor).hostname.replace(/^www\./, "").replace(/[^a-z0-9]+/gi, "-")}`;
-    qr.download({ name, extension: "png" });
-  });
-  $("qr-customize").addEventListener("click", () => open("/qr", { link: state.qrFor }));
-
-  for (const c of CHANNELS) {
-    const b = Object.assign(document.createElement("button"), { textContent: c.label });
-    b.dataset.id = c.id;
+  qrMini.update({ data: page.url });
+  document.querySelectorAll("[data-go]").forEach((b) =>
     b.addEventListener("click", () => {
-      state.channel = state.channel === c.id ? null : c.id;
-      remember("channel", state.channel || "");
-      renderUtm();
-    });
-    $("channels").append(b);
-  }
-  $("campaign").value = state.campaign;
-  $("campaign").addEventListener("input", (e) => {
-    state.campaign = e.target.value;
-    remember("campaign", state.campaign);
-    renderUtm();
-  });
-  $("utm-copy").addEventListener("click", async () => {
-    await navigator.clipboard.writeText(tagged());
-    $("utm-copy").textContent = "Copied";
-    setTimeout(() => ($("utm-copy").textContent = "Copy link"), 1400);
-  });
-  $("utm-qr").addEventListener("click", () => {
-    setQr(tagged());
-    showTab("qr");
-  });
-  $("utm-more").addEventListener("click", () => open("/utm", { url: state.url }));
-  renderUtm();
-
+      if (b.dataset.go === "qr") setQr(state.url); // the home card is always this page (the UTM view can hand over a tagged link)
+      show(b.dataset.go);
+    }),
+  );
   document.querySelectorAll("[data-tool]").forEach((b) =>
     b.addEventListener("click", () => {
       const tool = b.dataset.tool;
@@ -169,4 +138,29 @@ function renderUtm() {
       else open(`/${tool}`, { url: state.url });
     }),
   );
+
+  $("qr-download").addEventListener("click", () => {
+    const name = `qr-${new URL(state.qrFor).hostname.replace(/^www\./, "").replace(/[^a-z0-9]+/gi, "-")}`;
+    qr.download({ name, extension: "png" });
+  });
+  $("qr-customize").addEventListener("click", () => open("/qr", { link: state.qrFor }));
+
+  for (const id of ["utm-source", "utm-medium", "utm-campaign"]) {
+    $(id).value = recall(id);
+    $(id).addEventListener("input", () => {
+      remember(id, $(id).value);
+      renderUtm();
+    });
+  }
+  $("utm-copy").addEventListener("click", async () => {
+    await navigator.clipboard.writeText(tagged());
+    $("utm-copy").textContent = "Copied";
+    setTimeout(() => ($("utm-copy").textContent = "Copy link"), 1400);
+  });
+  $("utm-qr").addEventListener("click", () => {
+    setQr(tagged());
+    show("qr");
+  });
+  $("utm-more").addEventListener("click", () => open("/utm", { url: state.url }));
+  renderUtm();
 })();
