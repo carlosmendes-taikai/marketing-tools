@@ -20,7 +20,7 @@ export function Nav() {
         <div className={styles.links}>
           <ToolsMenu />
           <Link href="/blog" className={styles.navLink}>
-            Blog
+            Guides
           </Link>
           <SaveButton />
         </div>

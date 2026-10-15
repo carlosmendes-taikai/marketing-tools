@@ -8,7 +8,10 @@ export function Footer() {
       <div className="wrap">
         <div className={styles.footer}>
         <span>
-          {SITE_NAME} · built by {AUTHOR}
+          {SITE_NAME} · built by{" "}
+          <a href="https://mendes.cc" target="_blank" rel="noreferrer">
+            {AUTHOR}
+          </a>
         </span>
         <span className={styles.footerLinks}>
           <a href={CHROME_URL} target="_blank" rel="noreferrer">

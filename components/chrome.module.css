@@ -80,6 +80,14 @@
   color: var(--ink);
 }
 
+/* the author's name links to his site */
+.footer > span:first-child a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+
 .footerLinks {
   display: flex;
   gap: 20px;

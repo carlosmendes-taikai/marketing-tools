@@ -29,8 +29,18 @@ export default async function BlogPage() {
       </header>
       <p className={styles.intro}>Plain-English guides for the jobs our tools do. Read the how and why, then do it in one click.</p>
 
+      {/* jump straight to a topic instead of scrolling past every group */}
+      <nav className={styles.topics} aria-label="Guide topics">
+        {groups.map((g) => (
+          <a key={g.tool.slug} href={`#${g.tool.slug}`}>
+            {g.tool.name}
+            <span>{g.posts.length}</span>
+          </a>
+        ))}
+      </nav>
+
       {groups.map((g, gi) => (
-        <section key={g.tool.slug} className={styles.group} style={{ animationDelay: `${gi * 60}ms` }}>
+        <section key={g.tool.slug} id={g.tool.slug} className={styles.group} style={{ animationDelay: `${gi * 60}ms` }}>
           <div className={styles.groupHead}>
             <h2>{g.tool.name}</h2>
             <Link href={`/${g.tool.slug}`}>Open the tool →</Link>
