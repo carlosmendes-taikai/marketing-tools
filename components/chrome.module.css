@@ -1,5 +1,19 @@
+/* the menu stays pinned at the top of every page */
 .navOuter {
-  padding: 22px 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  background: rgba(244, 243, 239, 0.88);
+  backdrop-filter: saturate(1.4) blur(12px);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  box-shadow: 0 1px 0 rgba(20, 20, 19, 0.06);
+}
+
+.navOuter > div {
+  width: 100%;
 }
 
 .nav {
@@ -91,4 +105,73 @@
 .footerLinks {
   display: flex;
   gap: 20px;
+}
+
+/* the Chrome extension button in the menu (".links > a.cta" so the plain link style doesn't win) */
+.links > a.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 99px;
+  transition:
+    background 0.2s,
+    transform 0.3s var(--spring);
+}
+
+.links > a.cta:hover {
+  background: var(--accent-ink);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.cta:active {
+  transform: scale(0.96);
+}
+
+.cta svg {
+  transition: transform 0.4s var(--spring);
+}
+
+.cta:hover svg {
+  transform: rotate(-12deg);
+}
+
+.ctaShort {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .ctaLong {
+    display: none;
+  }
+  .ctaShort {
+    display: inline;
+  }
+  .links {
+    gap: 2px;
+  }
+  .links > a,
+  .navLink {
+    padding: 8px 10px;
+  }
+  .links > a.cta {
+    padding: 8px 12px;
+    margin-left: 2px;
+  }
+}
+
+/* narrowest phones: the extension button keeps only its icon */
+@media (max-width: 400px) {
+  .ctaShort {
+    display: none;
+  }
+  .links > a.cta {
+    padding: 9px 11px;
+  }
 }

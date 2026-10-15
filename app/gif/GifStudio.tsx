@@ -137,7 +137,7 @@ export function GifStudio() {
   return (
     <div className={ui.studio}>
       <div className={ui.controls}>
-        <section className={ui.panel} style={{ animationDelay: "0.2s" }}>
+        <section className={`${ui.panel} ${ui.beforePreview}`} style={{ animationDelay: "0.2s" }}>
           <h2>Your image</h2>
           {src ? (
             <div className={styles.loaded}>

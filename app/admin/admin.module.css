@@ -274,7 +274,7 @@
 
 .bar {
   position: sticky;
-  top: 0;
+  top: var(--nav-h);
   z-index: 20;
   display: flex;
   justify-content: space-between;
@@ -504,8 +504,8 @@
 /* preview */
 .preview {
   position: sticky;
-  top: 72px;
-  max-height: calc(100vh - 92px);
+  top: calc(var(--nav-h) + 72px);
+  max-height: calc(100vh - var(--nav-h) - 92px);
   overflow: auto;
   background: var(--tile);
   border-radius: var(--radius);

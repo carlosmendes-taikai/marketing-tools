@@ -42,6 +42,10 @@
   align-items: start;
 }
 
+/* marker: on phones this panel sits above the preview (see the 980px rule) */
+.beforePreview {
+}
+
 .controls {
   display: flex;
   flex-direction: column;
@@ -444,7 +448,7 @@
 .previewCol {
   min-width: 0;
   position: sticky;
-  top: 20px;
+  top: calc(var(--nav-h) + 20px);
 }
 
 .previewCard {
@@ -601,9 +605,20 @@
   .studio {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* phones: the main inputs first, then the preview, then the styling panels
+     (panels marked .beforePreview come first; .controls dissolves so its panels can be reordered) */
+  .controls {
+    display: contents;
+  }
+  .controls > * {
+    order: 3;
+  }
+  .controls > .beforePreview {
+    order: 1;
+  }
   .previewCol {
     position: static;
-    order: -1;
+    order: 2;
   }
   .head {
     grid-template-columns: 1fr;

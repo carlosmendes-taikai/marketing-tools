@@ -18,6 +18,7 @@
   --spring: cubic-bezier(0.3, 1.35, 0.5, 1);
 
   --font-sans: var(--font-schibsted), system-ui, sans-serif;
+  --nav-h: 76px; /* the pinned top menu: anything else that sticks sits below it */
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
@@ -37,7 +38,7 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip; /* not "hidden": that would stop the pinned menu from sticking */
 }
 
 a {

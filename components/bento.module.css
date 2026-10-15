@@ -5,7 +5,7 @@
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 236px;
   gap: 12px;
-  scroll-margin-top: 24px;
+  scroll-margin-top: calc(var(--nav-h) + 24px);
 }
 
 .tile {

@@ -109,7 +109,7 @@ export function SignatureStudio() {
   return (
     <div className={ui.studio}>
       <div className={ui.controls}>
-        <section className={ui.panel} style={{ animationDelay: "0.2s" }}>
+        <section className={`${ui.panel} ${ui.beforePreview}`} style={{ animationDelay: "0.2s" }}>
           <h2>Your details</h2>
           <div className={ui.fields}>
             <Text label="Full name" value={sig.name} onChange={(v) => set("name", v)} placeholder="Ana Silva" />

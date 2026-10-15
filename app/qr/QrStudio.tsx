@@ -195,7 +195,7 @@ export function QrStudio() {
   return (
     <div className={styles.studio}>
       <div className={styles.controls}>
-        <section className={styles.panel} style={{ animationDelay: "0.2s" }}>
+        <section className={`${styles.panel} ${styles.beforePreview}`} style={{ animationDelay: "0.2s" }}>
           <h2>What should it open?</h2>
           <div className={styles.types} role="tablist">
             {CONTENT_TYPES.map((t) => (

@@ -101,7 +101,7 @@ export function UtmStudio() {
     <>
       <div className={ui.studio}>
         <div className={ui.controls}>
-          <section className={ui.panel} style={{ animationDelay: "0.2s" }}>
+          <section className={`${ui.panel} ${ui.beforePreview}`} style={{ animationDelay: "0.2s" }}>
             <h2>Your link</h2>
             <label className={ui.field}>
               <input value={base} placeholder="yourwebsite.com/landing-page" spellCheck={false} inputMode="url" onChange={(e) => setBase(e.target.value)} />
@@ -118,7 +118,7 @@ export function UtmStudio() {
             </div>
           </section>
 
-          <section className={ui.panel} style={{ animationDelay: "0.26s" }}>
+          <section className={`${ui.panel} ${ui.beforePreview}`} style={{ animationDelay: "0.26s" }}>
             <h2>{mode === "single" ? "Where will you share it?" : "Pick the channels"}</h2>
             <div className={styles.channels}>
               {(mode === "single" ? CHANNELS : [...CHANNELS, ...custom]).map((c) => {
