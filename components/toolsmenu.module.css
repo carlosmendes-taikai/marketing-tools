@@ -38,9 +38,9 @@
   z-index: 50;
   top: calc(100% + 10px);
   right: 0;
-  width: min(820px, calc(100vw - 56px));
+  width: min(900px, calc(100vw - 56px));
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 440px minmax(0, 1fr);
   gap: 10px;
   padding: 10px;
   background: var(--tile);
@@ -68,11 +68,26 @@
   }
 }
 
+.groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 6px;
+  align-content: start;
+  padding: 6px 2px;
+}
+
+.group h3 {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 0 12px 4px;
+}
+
 .list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .list li {
@@ -92,28 +107,13 @@
 }
 
 .list a {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 9px 12px;
-  border-radius: 12px;
-  transition: background 0.2s;
-}
-
-.list a b {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 10px;
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.01em;
-}
-
-.list a small {
-  font-size: 12.5px;
-  line-height: 1.35;
-  color: var(--muted);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
+  transition: background 0.2s;
 }
 
 .list a.on {
@@ -129,7 +129,7 @@
 
 .demo {
   flex: 1;
-  min-height: 300px;
+  min-height: 260px;
   animation: swap 0.35s var(--ease);
 }
 
@@ -190,10 +190,13 @@
   .preview {
     display: none;
   }
-  .list {
-    max-height: calc(100vh - 110px);
+  .groups {
+    max-height: calc(100dvh - 110px);
+    overflow-y: auto;
+    gap: 12px 4px;
   }
-  .list a small {
-    -webkit-line-clamp: 2;
+  .list a {
+    padding: 7px 12px;
+    font-size: 14px;
   }
 }
