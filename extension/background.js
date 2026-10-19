@@ -4,11 +4,13 @@ importScripts("shared.js");
 const MENU = [
   { id: "headline", title: "Score this headline", contexts: ["selection"], open: (info) => toolUrl("/headline", { text: info.selectionText }) },
   { id: "keywords", title: "Keyword ideas for “%s”", contexts: ["selection"], open: (info) => toolUrl("/keywords", { q: info.selectionText }) },
+  { id: "readability", title: "Check how easy this is to read", contexts: ["selection"], open: (info) => toolUrl("/readability", { text: info.selectionText.slice(0, 4000) }) },
   { id: "link-preview", title: "Check this link's preview", contexts: ["link"], open: (info) => toolUrl("/preview", { url: info.linkUrl }) },
   { id: "link-qr", title: "QR code for this link", contexts: ["link"], open: (info) => toolUrl("/qr", { link: info.linkUrl }) },
   { id: "image-resize", title: "Resize this image for social", contexts: ["image"], open: (info) => toolUrl("/resize", { img: info.srcUrl }) },
   { id: "image-gif", title: "Animate this image as a GIF", contexts: ["image"], open: (info) => toolUrl("/gif", { img: info.srcUrl }) },
   { id: "page-speed", title: "Speed audit this page", contexts: ["page"], open: (info) => toolUrl("/speed", { url: info.pageUrl }) },
+  { id: "page-title", title: "Check this page's title in Google", contexts: ["page"], open: (info) => toolUrl("/headline", { url: info.pageUrl }) },
   { id: "page-preview", title: "Check how this page looks when shared", contexts: ["page"], open: (info) => toolUrl("/preview", { url: info.pageUrl }) },
   { id: "page-vibe", title: "Run a vibe code audit on this app", contexts: ["page"], open: (info) => toolUrl("/vibe", { url: info.pageUrl }) },
 ];

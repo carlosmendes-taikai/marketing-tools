@@ -134,7 +134,7 @@ function renderUtm() {
   document.querySelectorAll("[data-tool]").forEach((b) =>
     b.addEventListener("click", () => {
       const tool = b.dataset.tool;
-      if (tool === "headline") open("/headline", { text: state.title });
+      if (tool === "title") open("/headline", { url: state.url }); // the headline analyzer's website title check
       else open(`/${tool}`, { url: state.url });
     }),
   );
