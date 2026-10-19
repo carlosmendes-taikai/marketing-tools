@@ -16,7 +16,6 @@ const SIZE: Record<string, string> = {
   resize: styles.wide,
   headline: styles.wide,
   preview: styles.wide,
-  linkedin: styles.wide,
 };
 
 const DEMOS: Record<string, ComponentType<DemoProps>> = {
@@ -32,6 +31,7 @@ const DEMOS: Record<string, ComponentType<DemoProps>> = {
   headline: HeadlineDemo,
   gif: GifDemo,
   schema: SchemaDemo,
+  readability: ReadabilityDemo,
 };
 
 /** One tool's demo, playing, for use outside the landing grid (the nav's Tools menu). */
@@ -496,6 +496,36 @@ function VibeDemo({ active }: DemoProps) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/** A wordy sentence gets its highlights one by one, and the grade drops as they're fixed. */
+const READ_STEPS = [
+  { grade: 14, marks: [] as number[] },
+  { grade: 14, marks: [0] },
+  { grade: 14, marks: [0, 1] },
+  { grade: 7, marks: [] },
+];
+const READ_WORDS = ["In order to", " leverage", " our tools, just sign up."];
+const READ_FIXED = "Sign up to use our tools.";
+
+function ReadabilityDemo({ active }: DemoProps) {
+  const i = useTicker(1100, READ_STEPS.length, active);
+  const step = active ? READ_STEPS[i] : READ_STEPS[0];
+  const fixed = active && i === READ_STEPS.length - 1;
+  return (
+    <div className={styles.read}>
+      <p>
+        {fixed
+          ? READ_FIXED
+          : READ_WORDS.map((w, k) => (
+              <span key={k} className={step.marks.includes(k) ? styles[k === 0 ? "readSimpler" : "readBuzz"] : ""}>
+                {w}
+              </span>
+            ))}
+      </p>
+      <span className={`${styles.readGrade} ${fixed ? styles.readGood : ""}`}>Grade {step.grade}</span>
     </div>
   );
 }
