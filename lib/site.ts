@@ -23,6 +23,7 @@ export const TOOLS: Tool[] = [
   { slug: "linkedin", name: "LinkedIn post formatter", blurb: "Bold, italic and lists, plus where \"…more\" cuts your post.", live: true },
   { slug: "resize", name: "Image resizer", blurb: "One image, every social size, one zip.", live: true },
   { slug: "headline", name: "Headline analyzer", blurb: "Score your hook before you hit post.", live: true },
+  { slug: "engagement", name: "Engagement rate calculator", blurb: "Your rate on any platform, next to the benchmark.", live: true },
   { slug: "readability", name: "Readability checker", blurb: "Reading level, long sentences and buzzwords, highlighted.", live: true },
   { slug: "schema", name: "Schema markup generator", blurb: "Structured data for stars, prices and FAQs in Google.", live: true },
   { slug: "gif", name: "GIF animator", blurb: "Turn a logo or banner into a subtle animated GIF.", live: true },

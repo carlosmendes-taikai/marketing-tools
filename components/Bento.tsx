@@ -16,6 +16,9 @@ const SIZE: Record<string, string> = {
   resize: styles.wide,
   headline: styles.wide,
   preview: styles.wide,
+  linkedin: styles.wide,
+  gif: styles.wide,
+  engagement: styles.wide,
 };
 
 const DEMOS: Record<string, ComponentType<DemoProps>> = {
@@ -32,6 +35,7 @@ const DEMOS: Record<string, ComponentType<DemoProps>> = {
   gif: GifDemo,
   schema: SchemaDemo,
   readability: ReadabilityDemo,
+  engagement: EngagementDemo,
 };
 
 /** One tool's demo, playing, for use outside the landing grid (the nav's Tools menu). */
@@ -496,6 +500,39 @@ function VibeDemo({ active }: DemoProps) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+const ENG: [string, number, number, string][] = [
+  ["Instagram", 0.5, 1.8, "Good"],
+  ["TikTok", 3.5, 6.2, "Good"],
+  ["LinkedIn", 4, 11.4, "Excellent"],
+];
+
+/** Each platform's rate counts up past its benchmark line. */
+function EngagementDemo({ active }: DemoProps) {
+  const i = useTicker(2600, ENG.length, active);
+  const [name, typical, rate, band] = ENG[active ? i : 0];
+  return <EngagementMeter key={active ? i : "idle"} name={name} typical={typical} rate={rate} band={band} active={active} />;
+}
+
+function EngagementMeter({ name, typical, rate, band, active }: { name: string; typical: number; rate: number; band: string; active: boolean }) {
+  const n = useCountUp(Math.round(rate * 10), 2, 22, active, 1200) / 10;
+  const max = rate * 1.35;
+  return (
+    <div className={styles.eng}>
+      <div className={styles.engTop}>
+        <b>{n.toFixed(1)}%</b>
+        <span>{band}</span>
+      </div>
+      <div className={styles.engTrack}>
+        <i style={{ width: `${(n / max) * 100}%` }} />
+        <em style={{ left: `${(typical / max) * 100}%` }} />
+      </div>
+      <small>
+        {name} · typical {typical}%
+      </small>
     </div>
   );
 }

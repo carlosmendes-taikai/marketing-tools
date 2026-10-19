@@ -930,3 +930,62 @@
   background: #d3eedd;
   color: #17683e;
 }
+
+/* engagement */
+.eng {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.engTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.engTop b {
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.engTop span {
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: #e1f3e8;
+  color: #17683e;
+}
+
+.engTrack {
+  position: relative;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--soft);
+}
+
+.engTrack i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--accent);
+}
+
+.engTrack em {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 16px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+
+.eng small {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
