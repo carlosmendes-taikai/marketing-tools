@@ -60,8 +60,20 @@
   border-bottom: 1px solid var(--line);
 }
 
-.groupHead h2 {
-  font-size: 22px;
+.section {
+  scroll-margin-top: calc(var(--nav-h) + 80px);
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  margin-bottom: 18px;
+}
+
+.groupHead h3 {
+  font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.03em;
 }
@@ -416,20 +428,24 @@
 }
 
 @media (max-width: 640px) {
+  /* four groups fit as a 2 x 2 grid, so none hides off screen */
   .topics {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin-left: -16px;
-    margin-right: -16px;
-    padding-left: 16px;
-    padding-right: 16px;
-    scrollbar-width: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 10px 0;
   }
   .topics a {
-    flex: none;
+    justify-content: space-between;
+    padding: 7px 12px;
+    font-size: 13.5px;
   }
-  .group {
-    scroll-margin-top: calc(var(--nav-h) + 76px);
+  .group,
+  .section {
+    scroll-margin-top: calc(var(--nav-h) + 110px);
+  }
+  .sectionTitle {
+    font-size: 28px;
   }
   .header h1 {
     font-size: 34px;
