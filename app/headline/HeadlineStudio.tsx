@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { analyze, CONTEXTS, FORMULAS, PART_LABEL, type Analysis, type Context, type WordKind } from "@/lib/headline";
+import { brandOf, cutToWidth, DESC_PX, pageChecks, TITLE_PX, type PageTitleInfo } from "@/lib/title-check";
 import ui from "@/components/tool.module.css";
 import styles from "./headline.module.css";
 
@@ -18,6 +19,30 @@ export function HeadlineStudio() {
   const [keyword, setKeyword] = useState("");
   const [history, setHistory] = useState<Saved[]>([]);
   const input = useRef<HTMLTextAreaElement>(null);
+  const [mode, setMode] = useState<"write" | "site">("write");
+  const [site, setSite] = useState("");
+  const [page, setPage] = useState<PageTitleInfo | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function checkSite(address: string) {
+    if (!address.trim()) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/title?url=${encodeURIComponent(address.trim())}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
+      setPage(data);
+      setContext("seo");
+      setText(data.title.slice(0, 300));
+    } catch (e) {
+      setPage(null);
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     let saved: Saved[] = [];
@@ -27,10 +52,18 @@ export function HeadlineStudio() {
     queueMicrotask(() => setHistory(saved));
   }, []);
 
-  // The browser extension and other tools can hand over a value: ?text=...
+  // The browser extension and other tools can hand over a value: ?text=... or a page to check: ?url=...
   useEffect(() => {
-    const value = new URLSearchParams(window.location.search).get("text");
-    if (value) queueMicrotask(() => setText(value.slice(0, 300)));
+    const params = new URLSearchParams(window.location.search);
+    const value = params.get("text");
+    const address = params.get("url");
+    if (address)
+      queueMicrotask(() => {
+        setMode("site");
+        setSite(address);
+        checkSite(address);
+      });
+    else if (value) queueMicrotask(() => setText(value.slice(0, 300)));
   }, []);
 
   const a = useMemo(() => analyze(text, context, keyword), [text, context, keyword]);
@@ -60,8 +93,39 @@ export function HeadlineStudio() {
 
   return (
     <div className={styles.studio}>
+      <div className={`${ui.segment} ${styles.modeSwitch}`}>
+        <button className={mode === "write" ? ui.on : ""} onClick={() => setMode("write")}>
+          Write a headline
+        </button>
+        <button
+          className={mode === "site" ? ui.on : ""}
+          onClick={() => {
+            setMode("site");
+            setContext("seo");
+          }}
+        >
+          Check a website title
+        </button>
+      </div>
+
       <section className={`${ui.panel} ${styles.inputPanel}`} style={{ animationDelay: "0.2s" }}>
-        <div className={styles.topRow}>
+        {mode === "site" && (
+          <form
+            className={styles.siteForm}
+            onSubmit={(e) => {
+              e.preventDefault();
+              checkSite(site);
+            }}
+          >
+            <input value={site} placeholder="Paste a page address, like yoursite.com/pricing" spellCheck={false} inputMode="url" onChange={(e) => setSite(e.target.value)} />
+            <button className={ui.primary} disabled={!site.trim() || loading}>
+              {loading ? "Checking…" : "Check"}
+            </button>
+          </form>
+        )}
+        {mode === "site" && error && <p className={styles.siteError}>{error}</p>}
+        {mode === "site" && page && <span className={styles.siteLabel}>Page title. Edit it to try a better version:</span>}
+        <div className={styles.topRow} hidden={mode === "site"}>
           <div className={ui.segment}>
             {CONTEXTS.map((c) => (
               <button key={c.id} className={context === c.id ? ui.on : ""} onClick={() => setContext(c.id)}>
@@ -73,13 +137,13 @@ export function HeadlineStudio() {
             <input className={styles.keyword} value={keyword} placeholder="Target keyword (optional)" spellCheck={false} onChange={(e) => setKeyword(e.target.value)} />
           )}
         </div>
-        <div className={styles.inputWrap}>
+        <div className={styles.inputWrap} hidden={mode === "site" && !page}>
           <textarea
             ref={input}
             className={styles.input}
             rows={2}
             value={text}
-            placeholder="Type your headline"
+            placeholder={mode === "site" ? "This page has no title" : "Type your headline"}
             onChange={(e) => setText(e.target.value.replace(/\n/g, " "))}
             onBlur={() => remember()}
             onKeyDown={(e) => {
@@ -118,7 +182,11 @@ export function HeadlineStudio() {
         )}
       </section>
 
-      {has ? (
+      {mode === "site" && page && <SiteCheck page={page} title={text} />}
+
+      {mode === "site" && !page ? (
+        <p className={styles.empty}>{loading ? "Reading the page…" : "Paste any page to see how its title and description look in Google, and what to fix."}</p>
+      ) : has ? (
         <div className={styles.grid}>
           <section className={`${styles.card} ${styles.scoreCard}`}>
             <Ring value={a.score} />
@@ -178,7 +246,7 @@ export function HeadlineStudio() {
 
           <section className={`${styles.card} ${styles.wide}`} style={{ animationDelay: "180ms" }}>
             <h3>How it looks</h3>
-            <Previews a={a} context={context} />
+            <Previews a={a} context={context} site={mode === "site" && !!page} />
             {a.lastWords && (
               <p className={styles.skim}>
                 People skim the first and last words: <b>{a.firstWords}</b> … <b>{a.lastWords}</b>. Do they tell the story on their own?
@@ -216,6 +284,47 @@ export function HeadlineStudio() {
           </ul>
         </section>
       )}
+    </div>
+  );
+}
+
+/** A live page's Google result, drawn with the same widths Google uses, plus what to fix on the page. */
+function SiteCheck({ page, title }: { page: PageTitleInfo; title: string }) {
+  const checks = pageChecks(page, title);
+  const u = new URL(page.finalUrl);
+  const crumbs = [u.hostname.replace(/^www\./, ""), ...u.pathname.split("/").filter(Boolean)].join(" › ");
+  const issues = checks.filter((c) => c.level !== "pass").length;
+  return (
+    <div className={styles.grid}>
+      <section className={`${styles.card} ${styles.wide}`}>
+        <div className={styles.siteHead}>
+          <h3>In Google, today</h3>
+          <span>{issues ? `${issues} thing${issues === 1 ? "" : "s"} to fix` : "Looks good"}</span>
+        </div>
+        <div className={`${styles.google} ${styles.serp}`}>
+          <div className={styles.serpSite}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={page.favicon} alt="" width={26} height={26} onError={(e) => (e.currentTarget.style.visibility = "hidden")} />
+            <div>
+              <b>{brandOf(page)}</b>
+              <span>{crumbs}</span>
+            </div>
+          </div>
+          <span className={styles.gTitle}>{title.trim() ? cutToWidth(title.trim(), TITLE_PX, "title") : <i>No title</i>}</span>
+          <span className={styles.gDesc}>{page.description ? cutToWidth(page.description, DESC_PX, "description") : <i>No description. Google picks text from the page.</i>}</span>
+        </div>
+        <ul className={`${styles.checks} ${styles.siteChecks}`}>
+          {checks.map((c, i) => (
+            <li key={c.title} className={styles[c.level]} style={{ animationDelay: `${i * 40}ms` }}>
+              <span className={styles.mark} />
+              <div>
+                <b>{c.title}</b>
+                {c.tip && c.level !== "pass" && <span>{c.tip}</span>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }
@@ -266,7 +375,7 @@ function Ring({ value }: { value: number }) {
   );
 }
 
-function Previews({ a, context }: { a: Analysis; context: Context }) {
+function Previews({ a, context, site }: { a: Analysis; context: Context; site?: boolean }) {
   const cut = (s: string, n: number) => ([...s].length > n ? [...s].slice(0, n - 1).join("").trimEnd() + "…" : s);
   const google = (
     <div key="g" className={styles.pv}>
@@ -323,5 +432,6 @@ function Previews({ a, context }: { a: Analysis; context: Context }) {
     </div>
   );
   const order = { seo: [google, linkedin, inbox], linkedin: [linkedin, google, inbox], email: [inbox, google, linkedin], ad: [ad, google, linkedin] }[context];
-  return <div className={styles.previews}>{order}</div>;
+  // a checked website already shows its real Google result above
+  return <div className={styles.previews}>{site ? order.filter((el) => el !== google) : order}</div>;
 }

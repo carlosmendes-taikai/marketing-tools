@@ -1,4 +1,5 @@
 import { BlockedError, readCapped, safeFetch } from "@/lib/safe-fetch";
+import { attrs, decode } from "@/lib/html";
 import { runChecks, scoreOf, suggestedTags, type ImageInfo, type PageMeta } from "@/lib/preview";
 
 // GET /api/preview?url=example.com
@@ -19,21 +20,6 @@ function limited(ip: string) {
     return false;
   }
   return ++entry.count > MAX_PER_WINDOW;
-}
-
-const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
-const decode = (s: string) =>
-  s
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(+d))
-    .replace(/&([a-z]+);/gi, (m, n) => ENTITIES[n.toLowerCase()] ?? m)
-    .replace(/\s+/g, " ")
-    .trim();
-
-function attrs(tag: string): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const m of tag.matchAll(/([a-zA-Z:-]+)\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/g)) out[m[1].toLowerCase()] = decode(m[3] ?? m[4] ?? m[5] ?? "");
-  return out;
 }
 
 function parseHead(html: string, base: URL) {

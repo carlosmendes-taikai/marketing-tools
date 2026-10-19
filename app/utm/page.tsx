@@ -6,7 +6,7 @@ import styles from "@/components/tool.module.css";
 
 export const metadata: Metadata = pageMetadata(
   "Free UTM builder with QR codes",
-  "Build tagged campaign links for Google Analytics in seconds. One link, one per channel or hundreds from a spreadsheet, each with a QR code. Free, no account.",
+  "Build tagged campaign links for Google Analytics. One link, one per channel or hundreds from a spreadsheet, each with a QR code. Free, no account.",
   "/utm",
 );
 
