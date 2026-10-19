@@ -17,7 +17,6 @@ const SIZE: Record<string, string> = {
   headline: styles.wide,
   preview: styles.wide,
   linkedin: styles.wide,
-  gif: styles.wide,
 };
 
 const DEMOS: Record<string, ComponentType<DemoProps>> = {
@@ -32,6 +31,7 @@ const DEMOS: Record<string, ComponentType<DemoProps>> = {
   resize: ResizeDemo,
   headline: HeadlineDemo,
   gif: GifDemo,
+  schema: SchemaDemo,
 };
 
 /** One tool's demo, playing, for use outside the landing grid (the nav's Tools menu). */
@@ -496,6 +496,30 @@ function VibeDemo({ active }: DemoProps) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+const SCHEMA: [string, string, string][] = [
+  ["Product", "★★★★★", "4.8 · €89 · In stock"],
+  ["Event", "Sat, 14 Nov", "LX Factory, Lisbon"],
+  ["FAQ", "Is it free?", "Does it expire?"],
+];
+
+/** The JSON type changes, and the extra Google detail it unlocks pops in underneath. */
+function SchemaDemo({ active }: DemoProps) {
+  const i = useTicker(2200, SCHEMA.length, active);
+  const [type, a, b] = SCHEMA[i];
+  return (
+    <div className={styles.schema}>
+      <code>
+        <span>&quot;@type&quot;:</span> &quot;{type}&quot;
+      </code>
+      <div className={styles.schemaRes} key={type}>
+        <i />
+        <b className={type === "Product" ? styles.schemaStars : ""}>{a}</b>
+        <span>{b}</span>
+      </div>
     </div>
   );
 }
