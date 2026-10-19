@@ -405,3 +405,69 @@
     display: none;
   }
 }
+
+/* many links at once */
+.bulkInput {
+  font-family: var(--font-mono);
+  font-size: 13px !important;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 150px;
+}
+
+.bulkHint {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.upload {
+  position: relative;
+  color: var(--accent-ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.upload:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.bulkList {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.bulkList b {
+  font-size: 13.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bad b,
+.bad span {
+  color: #b33a25 !important;
+}
+
+.bulkButtons {
+  flex-wrap: wrap;
+}
+
+.bulkButtons > * {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  padding-inline: 16px;
+}

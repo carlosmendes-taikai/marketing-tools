@@ -42,3 +42,9 @@ export async function downloadQrPng(data: string, name: string) {
   const { default: QR } = await import("qr-code-styling");
   await new QR({ type: "canvas", width: 1024, height: 1024, margin: 40, data, ...STYLE }).download({ name, extension: "png" });
 }
+
+/** The same 1024px PNG as a file in memory, for zipping many codes at once. */
+export async function qrPngBlob(data: string): Promise<Blob> {
+  const { default: QR } = await import("qr-code-styling");
+  return (await new QR({ type: "canvas", width: 1024, height: 1024, margin: 40, data, ...STYLE }).getRawData("png")) as Blob;
+}

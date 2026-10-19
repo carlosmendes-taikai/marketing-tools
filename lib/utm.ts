@@ -77,3 +77,81 @@ export function warningsFor(base: string, f: UtmFields): string[] {
 }
 
 export type SavedLink = { id: string; url: string; base: string; fields: UtmFields; createdAt: string };
+
+/* ---------- many links at once ---------- */
+
+export const BULK_LIMIT = 500;
+
+export type BulkRow = { base: string; fields: Partial<UtmFields> };
+
+// Column names a spreadsheet might use for each tag (header row is optional)
+const COLUMN_NAMES: Record<string, keyof UtmFields | "url"> = {
+  url: "url", link: "url", links: "url", urls: "url", "landing page": "url", page: "url", address: "url", website: "url",
+  source: "source", medium: "medium", campaign: "campaign", "campaign name": "campaign", content: "content", term: "term", keyword: "term", id: "id", "campaign id": "id",
+};
+const NO_HEADER_ORDER: (keyof UtmFields | "url")[] = ["url", "source", "medium", "campaign", "content", "term", "id"];
+
+function columnFor(name: string): keyof UtmFields | "url" | undefined {
+  const n = name.trim().toLowerCase().replace(/^utm[_ ]/, "").replace(/_/g, " ");
+  return COLUMN_NAMES[n] ?? COLUMN_NAMES[n.replace(/^campaign /, "")];
+}
+
+/** Reads CSV text (with quoted cells) into rows of cells. */
+export function parseCsv(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = "";
+  let quoted = false;
+  const sep = (text.split("\n")[0].match(/;/g)?.length ?? 0) > (text.split("\n")[0].match(/,/g)?.length ?? 0) ? ";" : ",";
+  const endCell = () => {
+    row.push(cell);
+    cell = "";
+  };
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"' && text[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else if (ch === '"') quoted = false;
+      else cell += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === sep) endCell();
+    else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && text[i + 1] === "\n") i++;
+      endCell();
+      rows.push(row);
+      row = [];
+    } else cell += ch;
+  }
+  if (cell || row.length) {
+    endCell();
+    rows.push(row);
+  }
+  return rows;
+}
+
+/**
+ * Pasted links, one per line. Cells copied from a spreadsheet arrive separated by tabs: the first column is the
+ * link, and a header row (url, source, medium, campaign...) decides what the other columns mean. Without a header
+ * the order is link, source, medium, campaign, content, term, id.
+ */
+export function parseBulk(text: string): BulkRow[] {
+  const lines = text.split(/\r?\n/).map((l) => l.split("\t")).filter((cells) => cells.some((c) => c.trim()));
+  if (!lines.length) return [];
+  let order = NO_HEADER_ORDER;
+  const first = lines[0];
+  if (!parseBase(first[0]) && first.some((c) => columnFor(c))) {
+    order = first.map((c) => columnFor(c) ?? ("skip" as never));
+    if (!order.includes("url")) order[0] = "url";
+    lines.shift();
+  }
+  const urlCol = order.indexOf("url");
+  return lines.slice(0, BULK_LIMIT).map((cells) => {
+    const fields: Partial<UtmFields> = {};
+    order.forEach((key, i) => {
+      if (key !== "url" && (key as string) !== "skip" && cells[i]?.trim()) fields[key] = cells[i].trim();
+    });
+    return { base: (cells[urlCol] ?? "").trim(), fields };
+  });
+}

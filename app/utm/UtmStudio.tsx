@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { MiniQr, downloadQrPng } from "@/components/MiniQr";
-import { buildUtm, CHANNELS, type Channel, EMPTY_UTM, FIELD_INFO, parseBase, tidyValue, warningsFor, type Clean, type SavedLink, type UtmFields } from "@/lib/utm";
+import { MiniQr, downloadQrPng, qrPngBlob } from "@/components/MiniQr";
+import { makeZip } from "@/lib/zip";
+import { buildUtm, BULK_LIMIT, CHANNELS, type Channel, EMPTY_UTM, FIELD_INFO, parseBase, parseBulk, parseCsv, tidyValue, warningsFor, type Clean, type SavedLink, type UtmFields } from "@/lib/utm";
 import ui from "@/components/tool.module.css";
 import styles from "./utm.module.css";
 
@@ -13,7 +14,9 @@ export function UtmStudio() {
   const [base, setBase] = useState("");
   const [fields, setFields] = useState<UtmFields>(EMPTY_UTM);
   const [clean, setClean] = useState<Clean>({ lowercase: true, spaces: "_" });
-  const [mode, setMode] = useState<"single" | "multi">("single");
+  const [mode, setMode] = useState<"single" | "multi" | "bulk">("single");
+  const [bulkText, setBulkText] = useState("");
+  const [zipping, setZipping] = useState(false);
   const [channels, setChannels] = useState<Set<string>>(new Set(["linkedin", "instagram", "newsletter"]));
   const [more, setMore] = useState(false);
   const [other, setOther] = useState(false);
@@ -62,9 +65,41 @@ export function UtmStudio() {
     [base, fields, clean, channels, custom],
   );
 
+  const bulk = useMemo(
+    () =>
+      parseBulk(bulkText).map((r) => {
+        const f = { ...fields, ...r.fields };
+        return { base: r.base, fields: f, url: buildUtm(r.base, f, clean) };
+      }),
+    [bulkText, fields, clean],
+  );
+  const bulkReady = bulk.filter((r) => r.url);
+
+  async function readFile(file: File) {
+    const text = await file.text();
+    // CSV files become the same tab separated rows a spreadsheet paste gives
+    setBulkText(text.includes("\t") ? text : parseCsv(text).map((r) => r.join("\t")).join("\n"));
+  }
+
+  async function zipQrs() {
+    setZipping(true);
+    try {
+      const files = await Promise.all(
+        bulkReady.map(async (r, i) => ({ name: `${String(i + 1).padStart(3, "0")}-${slug(r.base)}.png`, blob: await qrPngBlob(r.url) })),
+      );
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(await makeZip(files));
+      a.download = "utm-qr-codes.zip";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    } finally {
+      setZipping(false);
+    }
+  }
+
   const set = (key: keyof UtmFields, v: string) => setFields((f) => ({ ...f, [key]: v }));
   const activeChannel = other ? undefined : CHANNELS.find((c) => c.source === fields.source && c.medium === fields.medium)?.id;
-  const otherOn = mode === "single" ? other || (!activeChannel && !!(fields.source || fields.medium)) : customOpen;
+  const otherOn = mode !== "multi" ? other || (!activeChannel && !!(fields.source || fields.medium)) : customOpen;
 
   function addCustom() {
     const source = tidyValue(draft.source, clean);
@@ -86,11 +121,11 @@ export function UtmStudio() {
     flash(key);
   }
 
-  function save(links: { url: string; fields: UtmFields }[]) {
+  function save(links: { url: string; base?: string; fields: UtmFields }[]) {
     const now = new Date().toISOString();
     const fresh = links
       .filter((l) => l.url && !library.some((s) => s.url === l.url))
-      .map((l) => ({ id: crypto.randomUUID(), url: l.url, base: base.trim(), fields: l.fields, createdAt: now }));
+      .map((l) => ({ id: crypto.randomUUID(), url: l.url, base: (l.base ?? base).trim(), fields: l.fields, createdAt: now }));
     setLibrary((lib) => [...fresh, ...lib]);
     flash("saved");
   }
@@ -102,10 +137,33 @@ export function UtmStudio() {
       <div className={ui.studio}>
         <div className={ui.controls}>
           <section className={`${ui.panel} ${ui.beforePreview}`} style={{ animationDelay: "0.2s" }}>
-            <h2>Your link</h2>
-            <label className={ui.field}>
-              <input value={base} placeholder="yourwebsite.com/landing-page" spellCheck={false} inputMode="url" onChange={(e) => setBase(e.target.value)} />
-            </label>
+            <h2>{mode === "bulk" ? "Your links" : "Your link"}</h2>
+            {mode === "bulk" ? (
+              <>
+                <label className={ui.field}>
+                  <textarea
+                    className={styles.bulkInput}
+                    value={bulkText}
+                    rows={7}
+                    wrap="off"
+                    spellCheck={false}
+                    placeholder={"yourwebsite.com/pricing\nyourwebsite.com/blog/launch\nyourwebsite.com/signup"}
+                    onChange={(e) => setBulkText(e.target.value)}
+                  />
+                </label>
+                <p className={styles.bulkHint}>
+                  One link per line, or paste straight from a spreadsheet. Extra columns named source, medium, campaign or content give each link its own tags. Up to {BULK_LIMIT} links.{" "}
+                  <label className={styles.upload}>
+                    Upload a CSV
+                    <input type="file" accept=".csv,.tsv,.txt,text/csv" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0])} />
+                  </label>
+                </p>
+              </>
+            ) : (
+              <label className={ui.field}>
+                <input value={base} placeholder="yourwebsite.com/landing-page" spellCheck={false} inputMode="url" onChange={(e) => setBase(e.target.value)} />
+              </label>
+            )}
             <div className={styles.modeRow}>
               <div className={ui.segment}>
                 <button className={mode === "single" ? ui.on : ""} onClick={() => setMode("single")}>
@@ -114,21 +172,24 @@ export function UtmStudio() {
                 <button className={mode === "multi" ? ui.on : ""} onClick={() => setMode("multi")}>
                   One per channel
                 </button>
+                <button className={mode === "bulk" ? ui.on : ""} onClick={() => setMode("bulk")}>
+                  Many links
+                </button>
               </div>
             </div>
           </section>
 
           <section className={`${ui.panel} ${ui.beforePreview}`} style={{ animationDelay: "0.26s" }}>
-            <h2>{mode === "single" ? "Where will you share it?" : "Pick the channels"}</h2>
+            <h2>{mode === "multi" ? "Pick the channels" : mode === "bulk" ? "Where will you share them?" : "Where will you share it?"}</h2>
             <div className={styles.channels}>
-              {(mode === "single" ? CHANNELS : [...CHANNELS, ...custom]).map((c) => {
-                const on = mode === "single" ? activeChannel === c.id : channels.has(c.id);
+              {(mode !== "multi" ? CHANNELS : [...CHANNELS, ...custom]).map((c) => {
+                const on = mode !== "multi" ? activeChannel === c.id : channels.has(c.id);
                 return (
                   <button
                     key={c.id}
                     className={`${styles.chip} ${on ? styles.chipOn : ""}`}
                     onClick={() => {
-                      if (mode === "single") {
+                      if (mode !== "multi") {
                         setOther(false);
                         setFields((f) => ({ ...f, source: c.source, medium: c.medium }));
                       } else
@@ -148,7 +209,7 @@ export function UtmStudio() {
               <button
                 className={`${styles.chip} ${otherOn ? styles.chipOn : ""}`}
                 onClick={() => {
-                  if (mode === "single") {
+                  if (mode !== "multi") {
                     setOther(true);
                     setFields((f) => ({ ...f, source: "", medium: "" }));
                     setTimeout(() => sourceRef.current?.focus(), 0);
@@ -176,7 +237,7 @@ export function UtmStudio() {
             )}
 
             <div className={`${ui.fields} ${styles.tagFields}`}>
-              {FIELD_INFO.filter((f) => (mode === "single" ? !f.optional || more : f.key !== "source" && f.key !== "medium" && (!f.optional || more))).map((f) => (
+              {FIELD_INFO.filter((f) => (mode !== "multi" ? !f.optional || more : f.key !== "source" && f.key !== "medium" && (!f.optional || more))).map((f) => (
                 <label key={f.key} className={`${ui.field} ${ui.half}`}>
                   <span className={styles.label}>{f.label}</span>
                   <small className={styles.desc}>{f.hint}</small>
@@ -258,6 +319,55 @@ export function UtmStudio() {
                   </div>
                 </div>
               </>
+            ) : mode === "bulk" ? (
+              <>
+                <div className={styles.multiHead}>
+                  <b>
+                    {bulkReady.length} link{bulkReady.length === 1 ? "" : "s"}
+                  </b>
+                  <span>
+                    {!bulk.length
+                      ? "paste your links first"
+                      : !fields.source.trim() && !bulk.every((r) => r.fields.source)
+                        ? "pick where you'll share them"
+                        : bulk.length > bulkReady.length
+                          ? `${bulk.length - bulkReady.length} line${bulk.length - bulkReady.length === 1 ? "" : "s"} skipped`
+                          : fields.campaign
+                            ? `campaign ${tidyValue(fields.campaign, clean)}`
+                            : "add a campaign name"}
+                  </span>
+                </div>
+                <ul className={`${styles.multiList} ${styles.bulkList}`}>
+                  {bulk.map((r, i) => (
+                    <li key={i} className={r.url ? "" : styles.bad}>
+                      <div>
+                        <b>{r.base.replace(/^https?:\/\/(www\.)?/, "") || "(empty)"}</b>
+                        <span>{r.url ? r.url.replace(/^https?:\/\//, "") : "This doesn't look like a link"}</span>
+                      </div>
+                      <button className={styles.iconBtn} disabled={!r.url} onClick={() => copy(r.url, `bulk-${i}`)} title="Copy link">
+                        {copied === `bulk-${i}` ? "✓" : "Copy"}
+                      </button>
+                      <button className={styles.iconBtn} disabled={!r.url} onClick={() => downloadQrPng(r.url, `qr-${slug(r.base)}`)} title="Download QR code">
+                        QR
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <div className={`${ui.buttons} ${styles.bulkButtons}`}>
+                  <button className={ui.primary} disabled={!bulkReady.length} onClick={() => copy(bulk.map((r) => r.url).join("\n"), "all")} title="One per line, in the same order, so they paste back into your spreadsheet">
+                    {copied === "all" ? "Copied" : "Copy all"}
+                  </button>
+                  <button className={ui.secondary} disabled={!bulkReady.length} onClick={() => downloadCsv(bulkReady.map((r) => ({ url: r.url, base: r.base, fields: tidyFields(r.fields) })), "utm-links")}>
+                    CSV
+                  </button>
+                  <button className={ui.secondary} disabled={!bulkReady.length || zipping} onClick={zipQrs}>
+                    {zipping ? "Making…" : "QR codes (.zip)"}
+                  </button>
+                  <button className={ui.secondary} disabled={!bulkReady.length} onClick={() => save(bulkReady.map((r) => ({ url: r.url, base: r.base, fields: tidyFields(r.fields) })))}>
+                    {copied === "saved" ? "Saved" : "Save all"}
+                  </button>
+                </div>
+              </>
             ) : (
               <>
                 <div className={styles.multiHead}>
@@ -336,6 +446,11 @@ function Pretty({ url }: { url: string }) {
       {u.hash && <span className={styles.other}>{u.hash}</span>}
     </>
   );
+}
+
+/** A short, file-name-safe version of a link: yoursite-com-blog-launch */
+function slug(link: string) {
+  return link.replace(/^https?:\/\/(www\.)?/, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").slice(0, 60).toLowerCase() || "link";
 }
 
 function downloadCsv(rows: { url: string; base: string; fields: UtmFields }[], name: string) {
