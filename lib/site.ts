@@ -1,7 +1,7 @@
 // The site name, used in the logo, titles and share images. Change it here and it updates everywhere.
 export const SITE_NAME = "mktbox";
 export const AUTHOR = "Carlos Mendes";
-export const GITHUB_URL = "https://github.com/carlosmendes-taikai/marketing-tools";
+export const GITHUB_URL = "https://github.com/mendes-cc/marketing-tools";
 export const CHROME_URL = "https://chromewebstore.google.com/detail/mktbox-free-marketing-too/ileaeieokkoaiegmpdjldjfjionjaide";
 
 export type Tool = {
