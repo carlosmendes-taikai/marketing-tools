@@ -196,7 +196,13 @@
     gap: 12px 4px;
   }
   .list a {
-    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
     font-size: 14px;
+  }
+  .trigger {
+    min-height: 44px;
   }
 }

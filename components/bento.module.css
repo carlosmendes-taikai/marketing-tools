@@ -19,7 +19,6 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  opacity: 0;
   transform: translateY(24px) scale(0.98);
   animation: pop 0.8s var(--spring) forwards;
   transition:
@@ -45,7 +44,7 @@
 
 .dark {
   background: var(--ink);
-  color: #f4f3ef;
+  color: var(--on-dark);
   border-color: var(--ink);
 }
 
@@ -56,12 +55,25 @@
   align-items: center;
   justify-content: center;
   min-height: 0;
+  margin-bottom: 12px; /* the demo never touches the name under it */
 }
 
 .tile h2 {
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.small h2 {
+  font-size: 20px;
+}
+
+/* the one-column cards are too short for a blurb on wide screens; phones show it on every card */
+@media (min-width: 561px) {
+  .small p {
+    display: none;
+  }
 }
 
 .big h2 {
@@ -73,10 +85,11 @@
   font-size: 14px;
   color: var(--muted);
   margin-top: 4px;
+  text-wrap: pretty;
 }
 
 .dark p {
-  color: #9e9c95;
+  color: var(--on-dark-muted);
 }
 
 .go {
@@ -146,13 +159,22 @@
 .qr i {
   aspect-ratio: 1;
   border-radius: 3px;
-  background: #f4f3ef;
-  transform: scale(0);
-  transition: transform 0.4s var(--spring);
+  background: var(--bg);
 }
 
-.qr i.on {
-  transform: scale(1);
+/* the code draws itself cell by cell (each cell's delay is set inline), then redraws */
+.active .qr i {
+  animation: qrDraw 2s var(--spring) infinite both;
+}
+
+@keyframes qrDraw {
+  0% {
+    transform: scale(0);
+  }
+  20%,
+  100% {
+    transform: scale(1);
+  }
 }
 
 .qr i.f {
@@ -173,17 +195,17 @@
 
 .qrTypes span {
   font-size: 11px;
-  border: 1px solid #2e2d2b;
+  border: 1px solid var(--dark-line);
   border-radius: 99px;
   padding: 4px 9px;
-  color: #9e9c95;
+  color: var(--on-dark-muted);
   transition: 0.3s;
 }
 
 .qrTypes span.act {
-  background: #f4f3ef;
+  background: var(--on-dark);
   color: var(--ink);
-  border-color: #f4f3ef;
+  border-color: var(--on-dark);
 }
 
 /* signature */
@@ -374,7 +396,7 @@
 
 .nets i {
   font-style: normal;
-  font-size: 10px;
+  font-size: 11px;
   padding: 2px 7px;
   border-radius: 99px;
   background: var(--soft);
@@ -464,7 +486,7 @@
   display: grid;
   place-items: center;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   transition: all 0.6s var(--spring);
 }
@@ -560,19 +582,13 @@
     grid-column: span 1;
   }
   .frames {
-    transform: scale(0.7);
+    transform: scale(0.6); /* all five frames fit a phone-width card */
   }
 }
 
 @keyframes rise {
   to {
     transform: none;
-  }
-}
-
-@keyframes fade {
-  to {
-    opacity: 1;
   }
 }
 
@@ -725,7 +741,7 @@
 }
 
 .vibeOn.v_pass i {
-  background: #3f9d6b;
+  background: var(--good);
 }
 
 .vibeOn.v_warn i {
@@ -733,7 +749,7 @@
 }
 
 .vibeOn.v_fail i {
-  background: #d1493f;
+  background: var(--bad);
 }
 
 /* gif animator: the mark, animated */
@@ -919,16 +935,16 @@
   font-size: 12px;
   padding: 4px 9px;
   border-radius: 99px;
-  background: #f6d8d2;
-  color: #8a2c1b;
+  background: var(--bad-soft);
+  color: var(--bad-ink);
   transition:
     background 0.3s,
     color 0.3s;
 }
 
 .readGood {
-  background: #d3eedd;
-  color: #17683e;
+  background: var(--good-soft);
+  color: var(--good-ink);
 }
 
 /* engagement */
@@ -957,8 +973,8 @@
   font-size: 12px;
   padding: 4px 9px;
   border-radius: 99px;
-  background: #e1f3e8;
-  color: #17683e;
+  background: var(--good-soft);
+  color: var(--good-ink);
 }
 
 .engTrack {

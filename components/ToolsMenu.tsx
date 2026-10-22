@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { ToolDemo } from "./Bento";
 import { GROUPS, TOOLS } from "@/lib/site";
 import styles from "./toolsmenu.module.css";
+
+// the demos load only when the menu first opens, so tool pages don't carry them
+const ToolDemo = dynamic(() => import("./demos").then((m) => m.ToolDemo), { ssr: false });
 
 const LIVE = TOOLS.filter((t) => t.live);
 // hover-to-open only where there's a real mouse; phones get a plain tap to open and close
@@ -15,6 +18,7 @@ export function ToolsMenu() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(LIVE[0].slug);
   const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hoverOpenedAt = useRef(0);
 
@@ -38,7 +42,12 @@ export function ToolsMenu() {
     const onDown = (e: PointerEvent) => {
       if (!root.current?.contains(e.target as Node)) setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    // Escape closes and puts the keyboard back on the button, so nobody loses their place
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      trigger.current?.focus();
+    };
     document.addEventListener("pointerdown", onDown);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -56,13 +65,13 @@ export function ToolsMenu() {
       onPointerEnter={(e) => e.pointerType === "mouse" && canHover() && show()}
       onPointerLeave={(e) => e.pointerType === "mouse" && canHover() && hideSoon()}
     >
-      <button className={`${styles.trigger} ${open ? styles.open : ""}`} aria-expanded={open} aria-haspopup="true" onClick={toggle}>
+      <button ref={trigger} className={`${styles.trigger} ${open ? styles.open : ""}`} aria-expanded={open} aria-controls="tools-menu" onClick={toggle}>
         Tools
         <span className={styles.chev} aria-hidden />
       </button>
 
       {open && (
-        <div className={styles.panel} role="menu">
+        <nav className={styles.panel} id="tools-menu" aria-label="Tools">
           <div className={styles.groups}>
             {GROUPS.map((g, gi) => (
               <div key={g} className={styles.group}>
@@ -72,7 +81,6 @@ export function ToolsMenu() {
                     <li key={t.slug} style={{ animationDelay: `${(gi * 3 + i) * 18}ms` }}>
                       <Link
                         href={`/${t.slug}`}
-                        role="menuitem"
                         className={t.slug === active ? styles.on : ""}
                         onPointerEnter={() => setActive(t.slug)}
                         onFocus={() => setActive(t.slug)}
@@ -100,7 +108,7 @@ export function ToolsMenu() {
               </span>
             </div>
           </Link>
-        </div>
+        </nav>
       )}
     </div>
   );

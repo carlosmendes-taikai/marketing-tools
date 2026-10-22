@@ -146,6 +146,24 @@
   display: none;
 }
 
+@media (max-width: 760px) {
+  .logo,
+  .links > a,
+  .navLink,
+  .links > a.cta {
+    min-height: 44px;
+  }
+  .footerLinks a,
+  .footer > span:first-child a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .footer {
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 520px) {
   .ctaLong {
     display: none;
@@ -173,5 +191,7 @@
   }
   .links > a.cta {
     padding: 9px 11px;
+    min-width: 44px;
+    justify-content: center;
   }
 }

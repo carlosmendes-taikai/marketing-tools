@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ToolDemo } from "./Bento";
+import { ToolDemo } from "./demos";
 import { TOOLS, nameInSentence } from "@/lib/site";
 import styles from "./toolcta.module.css";
 

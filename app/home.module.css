@@ -55,7 +55,6 @@
   font-weight: 450;
   letter-spacing: -0.02em;
   color: var(--muted);
-  opacity: 0;
   transform: translateY(10px);
   animation: pop 0.8s 0.5s var(--ease) forwards;
 }
@@ -76,12 +75,6 @@
 @keyframes rise {
   to {
     transform: none;
-  }
-}
-
-@keyframes fade {
-  to {
-    opacity: 1;
   }
 }
 
